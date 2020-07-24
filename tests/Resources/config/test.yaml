@@ -1,0 +1,20 @@
+framework:
+  test: true
+  secret: test
+
+ttskch_paginator:
+  page:
+    name: page
+    range: 2
+  limit:
+    name: limit
+    default: 2
+  sort:
+    key:
+      name: sort
+    direction:
+      name: direction
+      default: asc
+  template:
+    pager: pager.html.twig
+    sortable: sortable.html.twig

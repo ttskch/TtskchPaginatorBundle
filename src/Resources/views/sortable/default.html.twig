@@ -1,0 +1,5 @@
+<span class="{% block direction_class %}{{ direction_class_prefix|default('') ~ direction_current ~ direction_class_postfix|default('') }}{% endblock %}">
+  <a href="{{ path(route, queries|merge({(key_name): key, (direction_name): direction_next})) }}">
+    {% block text %}{{ text }}{% endblock %}
+  </a>
+</span>
