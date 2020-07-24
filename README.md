@@ -71,9 +71,9 @@ public function index(FooRepository $fooRepository, Context $context)
   <tbody>
   {% for foo in foos %}
     <tr>
-      <td>{{ foo['id'] }}</td>
-      <td>{{ foo['name'] }}</td>
-      <td>{{ foo['email'] }}</td>
+      <td>{{ foo.id }}</td>
+      <td>{{ foo.name }}</td>
+      <td>{{ foo.email }}</td>
     </tr>
   {% endfor %}
   </tbody>
@@ -266,7 +266,7 @@ public function countByCriteria(FooCriteria $criteria)
 private function createQueryBuilderFromCriteria(FooCriteria $criteria)
 {
     return $this->createQueryBuilder('f')
-        ->where('f.name like :query')
+        ->orWhere('f.name like :query')
         ->orWhere('f.email like :query')
         ->setParameter('query', sprintf('%%%s%%', str_replace('%', '\%', $criteria->query)))
     ;
@@ -309,9 +309,98 @@ public function index(FooRepository $fooRepository, Context $context)
     <tbody>
     {% for foo in foos %}
         <tr>
-            <td>{{ foo['id'] }}</td>
-            <td>{{ foo['name'] }}</td>
-            <td>{{ foo['email'] }}</td>
+            <td>{{ foo.id }}</td>
+            <td>{{ foo.name }}</td>
+            <td>{{ foo.email }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{{ ttskch_paginator_pager() }}
+```
+
+## Using with joined query
+
+```php
+// FooRepository.php
+
+use Ttskch\PaginatorBundle\Doctrine\Counter;
+use Ttskch\PaginatorBundle\Doctrine\Slicer;
+
+public function sliceByCriteria(FooCriteria $criteria)
+{
+    $qb = $this->createQueryBuilderFromCriteria($criteria);
+    $slicer = new Slicer($qb);
+
+    return $slicer($criteria, 'f');
+}
+
+public function countByCriteria(FooCriteria $criteria)
+{
+    $qb = $this->createQueryBuilderFromCriteria($criteria);
+    $counter = new Counter($qb);
+
+    return $counter($criteria);
+}
+
+private function createQueryBuilderFromCriteria(FooCriteria $criteria)
+{
+    return $this->createQueryBuilder('f')
+        ->leftJoin('f.bar', 'bar')
+        ->leftJoin('b.baz', 'baz')
+        ->orWhere('f.name like :query')
+        ->orWhere('f.email like :query')
+        ->orWhere('bar.name like :query')
+        ->orWhere('baz.name like :query')
+        ->setParameter('query', sprintf('%%%s%%', str_replace('%', '\%', $criteria->query)))
+    ;
+}
+```
+
+```php
+// FooController.php
+
+public function index(FooRepository $fooRepository, Context $context)
+{
+    $context->initialize(
+        'f.id',
+        [$fooRepository, 'sliceByCriteria'],
+        [$fooRepository, 'countByCriteria'],
+        FooCriteria::class,
+        FooSearchType::class
+    );
+
+    return $this->render('index.html.twig', [
+        'form' => $context->form->createView(),
+        'foos' => $context->slice,
+    ]);
+}
+```
+
+```twig
+{# index.html.twig #}
+
+{{ form(form, {action: path('foo_index'), method: 'get'}) }}
+
+<table>
+    <thead>
+    <tr>
+        <th>{{ ttskch_paginator_sortable('f.id') }}</th>
+        <th>{{ ttskch_paginator_sortable('f.name') }}</th>
+        <th>{{ ttskch_paginator_sortable('f.email') }}</th>
+        <th>{{ ttskch_paginator_sortable('bar.name') }}</th>
+        <th>{{ ttskch_paginator_sortable('baz.name') }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for foo in foos %}
+        <tr>
+            <td>{{ foo.id }}</td>
+            <td>{{ foo.name }}</td>
+            <td>{{ foo.email }}</td>
+            <td>{{ foo.bar.name }}</td>
+            <td>{{ foo.bar.baz.name }}</td>
         </tr>
     {% endfor %}
     </tbody>
