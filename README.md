@@ -348,7 +348,7 @@ private function createQueryBuilderFromCriteria(FooCriteria $criteria)
 {
     return $this->createQueryBuilder('f')
         ->leftJoin('f.bar', 'bar')
-        ->leftJoin('b.baz', 'baz')
+        ->leftJoin('bar.baz', 'baz')
         ->orWhere('f.name like :query')
         ->orWhere('f.email like :query')
         ->orWhere('bar.name like :query')
