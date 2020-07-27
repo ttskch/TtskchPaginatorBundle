@@ -12,7 +12,7 @@ use Ttskch\PaginatorBundle\Entity\Criteria;
 
 class CriteriaType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('page', HiddenType::class)
@@ -22,7 +22,7 @@ class CriteriaType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => Criteria::class,
