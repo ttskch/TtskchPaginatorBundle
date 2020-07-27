@@ -6,6 +6,8 @@
 
 The most thin and simple paginator bundle for Symfony.
 
+![](https://tva1.sinaimg.cn/large/007S8ZIlgy1gh5ti62x8yj31w50u0gst.jpg)
+
 ## Features
 
 * So **light weight**
