@@ -20,6 +20,12 @@ The most thin and simple paginator bundle for Symfony.
 * PHP >=7.1.3
 * Symfony ^4.0|^5.0
 
+## Demo
+
+👉 [Live demo is here](https://ttskchpaginatorbundle.herokuapp.com)
+
+You can also see a sample code on [demo branch](https://github.com/ttskch/TtskchPaginatorBundle/tree/demo).
+
 ## Installation
 
 ```bash
@@ -96,8 +102,8 @@ Just do like as following.
 <th>{{ ttskch_paginator_sortable('id') }}</th>
 <th>{{ ttskch_paginator_sortable('name') }}</th>
 <th>{{ ttskch_paginator_sortable('email') }}</th>
-<th>{{ ttskch_paginator_sortable('bar.id') }}</th>
-<th>{{ ttskch_paginator_sortable('bar.baz.id') }}</th>
+<th>{{ ttskch_paginator_sortable('bar.id', 'Bar') }}</th>
+<th>{{ ttskch_paginator_sortable('bar.baz.id', 'Baz') }}</th>
 
 {# ... #}
 ```
@@ -252,7 +258,7 @@ public function sliceByCriteria(FooCriteria $criteria)
     $qb = $this->createQueryBuilderFromCriteria($criteria);
     $slicer = new Slicer($qb);
 
-    return $slicer($criteria, 'f');
+    return $slicer($criteria);
 }
 
 public function countByCriteria(FooCriteria $criteria)
@@ -268,7 +274,7 @@ private function createQueryBuilderFromCriteria(FooCriteria $criteria)
     return $this->createQueryBuilder('f')
         ->orWhere('f.name like :query')
         ->orWhere('f.email like :query')
-        ->setParameter('query', sprintf('%%%s%%', str_replace('%', '\%', $criteria->query)))
+        ->setParameter('query', '%'.str_replace('%', '\%', $criteria->query).'%')
     ;
 }
 ```
@@ -287,8 +293,8 @@ public function index(FooRepository $fooRepository, Context $context)
     );
 
     return $this->render('index.html.twig', [
-        'form' => $context->form->createView(),
         'foos' => $context->slice,
+        'form' => $context->form->createView(),
     ]);
 }
 ```
@@ -333,7 +339,7 @@ public function sliceByCriteria(FooCriteria $criteria)
     $qb = $this->createQueryBuilderFromCriteria($criteria);
     $slicer = new Slicer($qb);
 
-    return $slicer($criteria, 'f');
+    return $slicer($criteria, true);
 }
 
 public function countByCriteria(FooCriteria $criteria)
@@ -353,7 +359,7 @@ private function createQueryBuilderFromCriteria(FooCriteria $criteria)
         ->orWhere('f.email like :query')
         ->orWhere('bar.name like :query')
         ->orWhere('baz.name like :query')
-        ->setParameter('query', sprintf('%%%s%%', str_replace('%', '\%', $criteria->query)))
+        ->setParameter('query', '%'.str_replace('%', '\%', $criteria->query).'%')
     ;
 }
 ```
@@ -372,8 +378,8 @@ public function index(FooRepository $fooRepository, Context $context)
     );
 
     return $this->render('index.html.twig', [
-        'form' => $context->form->createView(),
         'foos' => $context->slice,
+        'form' => $context->form->createView(),
     ]);
 }
 ```
@@ -386,11 +392,11 @@ public function index(FooRepository $fooRepository, Context $context)
 <table>
     <thead>
     <tr>
-        <th>{{ ttskch_paginator_sortable('f.id') }}</th>
-        <th>{{ ttskch_paginator_sortable('f.name') }}</th>
-        <th>{{ ttskch_paginator_sortable('f.email') }}</th>
-        <th>{{ ttskch_paginator_sortable('bar.name') }}</th>
-        <th>{{ ttskch_paginator_sortable('baz.name') }}</th>
+        <th>{{ ttskch_paginator_sortable('f.id', 'Id') }}</th>
+        <th>{{ ttskch_paginator_sortable('f.name', 'Name') }}</th>
+        <th>{{ ttskch_paginator_sortable('f.email', 'Email') }}</th>
+        <th>{{ ttskch_paginator_sortable('bar.name', 'Bar') }}</th>
+        <th>{{ ttskch_paginator_sortable('baz.name', 'Baz') }}</th>
     </tr>
     </thead>
     <tbody>
