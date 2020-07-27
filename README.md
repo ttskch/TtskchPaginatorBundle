@@ -18,7 +18,7 @@ The most thin and simple paginator bundle for Symfony.
 ## Requirement
 
 * PHP >=7.1.3
-* Symfony ^4.0
+* Symfony ^4.0|^5.0
 
 ## Installation
 

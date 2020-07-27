@@ -9,6 +9,9 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
+/**
+ * @see https://tech.quartetcom.co.jp/2016/12/19/functional-testing-syfony-bundle/
+ */
 class TestKernel extends Kernel
 {
     public function registerBundles()
