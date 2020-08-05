@@ -14,7 +14,7 @@ use Ttskch\PaginatorBundle\Form\CriteriaType;
 class Context
 {
     /**
-     * @var array
+     * @var array|\iterable
      */
     public $slice;
 
