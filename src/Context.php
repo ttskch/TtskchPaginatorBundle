@@ -58,10 +58,10 @@ class Context
     public function initialize(string $sortKey, ?callable $slicer, ?callable $counter, string $criteriaClass = Criteria::class, string $formTypeClass = CriteriaType::class): void
     {
         $this->criteria = new $criteriaClass();
-        $this->criteria->page = 1;
-        $this->criteria->limit = $this->config->limitDefault;
-        $this->criteria->sort = $sortKey;
-        $this->criteria->direction = $this->config->sortDirectionDefault;
+        $this->criteria->page = $this->criteria->page ?? 1;
+        $this->criteria->limit = $this->criteria->limit ?? $this->config->limitDefault;
+        $this->criteria->sort = $this->criteria->sort ?? $sortKey;
+        $this->criteria->direction = $this->criteria->direction ?? $this->config->sortDirectionDefault;
 
         $this->form = $this->formFactory->createNamed('', $formTypeClass, $this->criteria, [
             'method' => 'GET',
