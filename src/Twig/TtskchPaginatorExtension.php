@@ -44,7 +44,7 @@ class TtskchPaginatorExtension extends AbstractExtension
 
         $currentPage = $this->context->criteria->page;
         $firstPage = 1;
-        $lastPage = intval(ceil($this->context->count / $this->context->criteria->limit));
+        $lastPage = max(1, intval(ceil($this->context->count / $this->context->criteria->limit)));
         $leftPage = max($currentPage - (intval(floor(($this->context->config->pageRange - 1) / 2))), $firstPage);
         $rightPage = min($leftPage + $this->context->config->pageRange - 1, $lastPage);
         if ($rightPage === $lastPage) {
