@@ -55,7 +55,7 @@ class Context
         $this->formFactory = $formFactory;
     }
 
-    public function initialize(string $sortKey, ?callable $slicer, ?callable $counter, string $criteriaClass = Criteria::class, string $formTypeClass = CriteriaType::class): void
+    public function initialize(string $sortKey, callable $slicer = null, callable $counter = null, string $criteriaClass = Criteria::class, string $formTypeClass = CriteriaType::class): void
     {
         $this->criteria = new $criteriaClass();
         $this->criteria->page = $this->criteria->page ?? 1;
