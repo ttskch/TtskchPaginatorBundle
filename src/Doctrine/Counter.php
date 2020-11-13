@@ -11,7 +11,7 @@ class Counter extends Base
 {
     public function __invoke(Criteria $criteria): int
     {
-        $paginator = new Paginator($this->qb);
+        $paginator = new Paginator($this->qb, false);
 
         return count($paginator);
     }

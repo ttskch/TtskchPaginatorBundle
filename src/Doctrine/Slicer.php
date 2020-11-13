@@ -15,7 +15,7 @@ class Slicer extends Base
     {
         $this->sortByCriteria($criteria, $alreadyJoined);
 
-        $paginator = new Paginator($this->qb);
+        $paginator = new Paginator($this->qb, false);
 
         $paginator->getQuery()
             ->setFirstResult($criteria->limit * ($criteria->page - 1))
