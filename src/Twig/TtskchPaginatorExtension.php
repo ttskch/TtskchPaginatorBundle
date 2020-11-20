@@ -56,7 +56,7 @@ class TtskchPaginatorExtension extends AbstractExtension
 
         $context = array_merge($context, [
             'route' => $this->context->request ? $this->context->request->get('_route') : null,
-            'queries' => $this->context->request ? $this->context->request->query->all() : [],
+            'queries' => $this->context->request ?  array_merge($this->context->request->query->all(), $this->context->request->get('_route_params')) : [],
             'limit_name' => $this->context->config->limitName,
             'limit_current' => $this->context->criteria->limit,
             'page_name' => $this->context->config->pageName,
@@ -84,7 +84,7 @@ class TtskchPaginatorExtension extends AbstractExtension
         $nextDirection = $isSorted ? (strtolower($currentDirection) === 'asc' ? 'desc' : 'asc') : $this->context->config->sortDirectionDefault;
 
         // reset page number after re-sorting.
-        $queries = $this->context->request ? $this->context->request->query->all() : [];
+        $queries = $this->context->request ?  array_merge($this->context->request->query->all(), $this->context->request->get('_route_params')) : [];
         $queries[$this->context->config->pageName] = 1;
 
         $context = array_merge($context, [
