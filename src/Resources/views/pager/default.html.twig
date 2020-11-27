@@ -24,7 +24,7 @@
   {% block limit_selector %}
     <select class="limit-selector" onchange="location.href=this.querySelector('option:checked').getAttribute('data-link')">
       {% for limit in selectable_limits|default([10, 25, 50, 100, 250, 500]) %}
-        <option data-link="{{ path(route, queries|merge({(limit_name): limit, (page_name): 1})) }}" {% if limit == limit_current %}selected{% endif %}>
+        <option data-link="{{ path(route, queries|merge(route_params)|merge({(limit_name): limit, (page_name): 1})) }}" {% if limit == limit_current %}selected{% endif %}>
           {{ limit }}
         </option>
       {% endfor %}
@@ -35,7 +35,7 @@
     <ul class="pager">
       {% block left %}
         {% if page_left > page_first %}
-          <li><a href="{{ path(route, queries|merge({(page_name): 1})) }}">1</a></li>
+          <li><a href="{{ path(route, queries|merge(route_params)|merge({(page_name): 1})) }}">1</a></li>
         {% endif %}
         {% if page_left > page_first + 1 %}
           <li class="disabled">...</li>
@@ -44,7 +44,7 @@
 
       {% block range %}
         {% for page in page_left..page_right %}
-          {% set url = path(route, queries|merge({(page_name): page})) %}
+          {% set url = path(route, queries|merge(route_params)|merge({(page_name): page})) %}
           {% if page == page_current %}
             <li class="active"><span>{{ page }}</span></li>
           {% else %}
@@ -58,7 +58,7 @@
           <li class="disabled">...</li>
         {% endif %}
         {% if page_right < page_last %}
-          <li><a href="{{ path(route, queries|merge({(page_name): page_last})) }}">{{ page_last }}</a></li>
+          <li><a href="{{ path(route, queries|merge(route_params)|merge({(page_name): page_last})) }}">{{ page_last }}</a></li>
         {% endif %}
       {% endblock %}
     </ul>
