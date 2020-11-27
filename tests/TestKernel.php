@@ -28,6 +28,11 @@ class TestKernel extends Kernel
         ];
     }
 
+    /**
+     * only for Symfony 5.1+
+     *
+     * @see https://github.com/symfony/symfony/commit/cf45eeccfc48bee212ab014f68e9807ba02501ec#diff-ee9b2c16aec8aa80f67e6b3925791d7b092fc097651bcc2df21b70e7dc8bef12L73-R58
+     */
     protected function configureContainer(ContainerConfigurator $c)
     {
         $c->import(__DIR__.'/Resources/config/test.yaml');
