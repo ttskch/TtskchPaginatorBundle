@@ -1,5 +1,6 @@
 {{ route }}
-{{ queries|join() }}
+{{ route_params|filter((value, key) => key matches '/route_param/')|map((value, key) => key~'='~value)|join(',') }}
+{{ queries|map((value, key) => key~'='~value)|join(',') }}
 {{ key_name }}
 {{ key }}
 {{ direction_name }}

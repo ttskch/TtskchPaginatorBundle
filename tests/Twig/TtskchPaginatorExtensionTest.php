@@ -10,47 +10,35 @@ use Twig\Environment;
 
 class TtskchPaginatorExtensionTest extends WebTestCase
 {
-    /**
-     * @var TtskchPaginatorExtension
-     */
-    private $SUT;
-
-    public function setUp(): void
+    public function testRenderPager(): void
     {
-        self::bootKernel();
-        $container = self::$kernel->getContainer();
-
-        $data = [
-            ['id' => 1, 'name' => 'name1'],
-            ['id' => 2, 'name' => 'name2'],
-            ['id' => 3, 'name' => 'name3'],
-            ['id' => 4, 'name' => 'name4'],
-            ['id' => 5, 'name' => 'name5'],
-        ];
+        $client = self::createClient();
+        $client->request('GET', '/foo/bar/?key1=value1&key2=value2');
+        $container = $client->getContainer();
+        $container->get('request_stack')->push($client->getRequest());
 
         /** @var Context $context */
         $context = $container->get('ttskch_paginator.context');
-        $context->initialize(
-            '',
-            function () {},
-            function () use ($data) {
-                return count($data);
-            }
-        );
 
         /** @var Environment $twig */
         $twig = $container->get('twig');
 
-        $this->SUT = new TtskchPaginatorExtension($context, $twig);
-    }
+        $context->initialize(
+            '',
+            null,
+            function () {
+                return 5;
+            }
+        );
 
-    public function testRenderPager(): void
-    {
-        $text = $this->SUT->renderPager();
+        $SUT = new TtskchPaginatorExtension($context, $twig);
+
+        $text = $SUT->renderPager();
 
         $expected = <<<EOT
-
-
+route
+route_param1=foo,route_param2=bar
+key1=value1,key2=value2
 limit
 2
 page
@@ -71,16 +59,32 @@ EOT;
 
     public function testRenderSortableLink(): void
     {
-        $text = $this->SUT->renderSortableLink('name', 'Name');
+        $client = self::createClient();
+        $client->request('GET', '/foo/bar/?key1=value1&key2=value2');
+        $container = $client->getContainer();
+        $container->get('request_stack')->push($client->getRequest());
+
+        /** @var Context $context */
+        $context = $container->get('ttskch_paginator.context');
+
+        /** @var Environment $twig */
+        $twig = $container->get('twig');
+
+        $context->initialize('name');
+
+        $SUT = new TtskchPaginatorExtension($context, $twig);
+
+        $text = $SUT->renderSortableLink('name', 'Name');
 
         $expected = <<<EOT
-
-1
+route
+route_param1=foo,route_param2=bar
+key1=value1,key2=value2,page=1
 sort
 name
 direction
-
 asc
+desc
 Name
 
 EOT;

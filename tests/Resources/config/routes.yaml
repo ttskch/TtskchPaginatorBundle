@@ -1,0 +1,3 @@
+route:
+  path: /{route_param1}/{route_param2}
+  controller: Ttskch\PaginatorBundle\Fake\FakeController::index
