@@ -75,7 +75,7 @@ class TtskchPaginatorExtension extends AbstractExtension
         return $this->twig->render($templateName, $context);
     }
 
-    public function renderSortableLink(string $key, string $text = null, string $templateName = null, array $context = []): string
+    public function renderSortableLink(string $key, string $text = null, string $templateName = null, array $context = []) : string
     {
         $templateName = $templateName ?: $this->context->config->templateSortable;
 
