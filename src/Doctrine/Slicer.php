@@ -15,7 +15,8 @@ class Slicer extends Base
     {
         $this->sortByCriteria($criteria, $alreadyJoined);
 
-        $paginator = new Paginator($this->qb, false);
+        // @see https://stackoverflow.com/questions/50199102/setmaxresults-does-not-works-fine-when-doctrine-query-has-join/50203939#answer-50203939
+        $paginator = new Paginator($this->qb, true);
 
         $paginator->getQuery()
             ->setFirstResult($criteria->limit * ($criteria->page - 1))
