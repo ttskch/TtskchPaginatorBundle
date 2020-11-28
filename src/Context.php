@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Ttskch\PaginatorBundle;
 
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Ttskch\PaginatorBundle\Entity\Criteria;
@@ -14,7 +14,7 @@ use Ttskch\PaginatorBundle\Form\CriteriaType;
 class Context
 {
     /**
-     * @var array|\iterable
+     * @var \iterable
      */
     public $slice;
 
@@ -24,12 +24,12 @@ class Context
     public $count;
 
     /**
-     * @var Criteria|mixed
+     * @var Criteria
      */
     public $criteria;
 
     /**
-     * @var Form
+     * @var FormInterface
      */
     public $form;
 
@@ -57,11 +57,18 @@ class Context
 
     public function initialize(string $sortKey, callable $slicer = null, callable $counter = null, string $criteriaClass = Criteria::class, string $formTypeClass = CriteriaType::class): void
     {
-        $this->criteria = new $criteriaClass();
-        $this->criteria->page = $this->criteria->page ?? 1;
-        $this->criteria->limit = $this->criteria->limit ?? $this->config->limitDefault;
-        $this->criteria->sort = $this->criteria->sort ?? $sortKey;
-        $this->criteria->direction = $this->criteria->direction ?? $this->config->sortDirectionDefault;
+        $criteria = new $criteriaClass();
+
+        if (! $criteria instanceof Criteria) {
+            throw new \LogicException(sprintf('criteriaClass must be an instance of "%s"', Criteria::class));
+        }
+
+        $criteria->page = $criteria->page ?? 1;
+        $criteria->limit = $criteria->limit ?? $this->config->limitDefault;
+        $criteria->sort = $criteria->sort ?? $sortKey;
+        $criteria->direction = $criteria->direction ?? $this->config->sortDirectionDefault;
+
+        $this->criteria = $criteria;
 
         $this->form = $this->formFactory->createNamed('', $formTypeClass, $this->criteria, [
             'method' => 'GET',
