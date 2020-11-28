@@ -342,7 +342,7 @@ public function sliceByCriteria(FooCriteria $criteria)
     $qb = $this->createQueryBuilderFromCriteria($criteria);
     $slicer = new Slicer($qb);
 
-    return $slicer($criteria, true);
+    return $slicer($criteria, $alreadyJoined = true); // *
 }
 
 public function countByCriteria(FooCriteria $criteria)
