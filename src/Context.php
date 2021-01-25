@@ -55,7 +55,7 @@ class Context
         $this->formFactory = $formFactory;
     }
 
-    public function initialize(string $sortKey, callable $slicer = null, callable $counter = null, string $criteriaClass = Criteria::class, string $formTypeClass = CriteriaType::class): void
+    public function initialize(string $sortKey = null, callable $slicer = null, callable $counter = null, string $criteriaClass = Criteria::class, string $formTypeClass = CriteriaType::class): void
     {
         $criteria = new $criteriaClass();
 
