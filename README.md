@@ -212,11 +212,16 @@ ttskch_paginator:
 ```php
 // FooCriteria.php
 
-use Ttskch\PaginatorBundle\Entity\Criteria;
+use Ttskch\PaginatorBundle\Entity\AbstractCriteria;
 
-class FooCriteria extends Criteria
+class FooCriteria extends AbstractCriteria
 {
     public $query;
+
+    public function getFormTypeClass(): ?string
+    {
+        return FooSearchType::class;
+    }
 }
 ```
 
@@ -291,8 +296,7 @@ public function index(FooRepository $fooRepository, Context $context)
         'id',
         [$fooRepository, 'sliceByCriteria'],
         [$fooRepository, 'countByCriteria'],
-        FooCriteria::class,
-        FooSearchType::class
+        new FooCriteria()
     );
 
     return $this->render('index.html.twig', [
@@ -376,8 +380,7 @@ public function index(FooRepository $fooRepository, Context $context)
         'f.id',
         [$fooRepository, 'sliceByCriteria'],
         [$fooRepository, 'countByCriteria'],
-        FooCriteria::class,
-        FooSearchType::class
+        new FooCriteria()
     );
 
     return $this->render('index.html.twig', [
