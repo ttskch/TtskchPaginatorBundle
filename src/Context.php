@@ -8,13 +8,15 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Ttskch\PaginatorBundle\Entity\AbstractCriteria;
 use Ttskch\PaginatorBundle\Entity\Criteria;
-use Ttskch\PaginatorBundle\Form\CriteriaType;
+use Ttskch\PaginatorBundle\Exception\UnexpectedCountTypeException;
+use Ttskch\PaginatorBundle\Exception\UnexpectedSliceTypeException;
 
 class Context
 {
     /**
-     * @var \iterable
+     * @var \ArrayIterator
      */
     public $slice;
 
@@ -24,7 +26,7 @@ class Context
     public $count;
 
     /**
-     * @var Criteria
+     * @var AbstractCriteria
      */
     public $criteria;
 
@@ -55,14 +57,9 @@ class Context
         $this->formFactory = $formFactory;
     }
 
-    public function initialize(string $sortKey = null, callable $slicer = null, callable $counter = null, string $criteriaClass = Criteria::class, string $formTypeClass = CriteriaType::class): void
+    public function initialize(string $sortKey = null, callable $slicer = null, callable $counter = null, AbstractCriteria $criteria = null, bool $handleRequest = true): void
     {
-        $criteria = new $criteriaClass();
-
-        if (! $criteria instanceof Criteria) {
-            throw new \LogicException(sprintf('criteriaClass must be an instance of "%s"', Criteria::class));
-        }
-
+        $criteria = $criteria ?? new Criteria();
         $criteria->page = $criteria->page ?? 1;
         $criteria->limit = $criteria->limit ?? $this->config->limitDefault;
         $criteria->sort = $criteria->sort ?? $sortKey;
@@ -70,14 +67,24 @@ class Context
 
         $this->criteria = $criteria;
 
-        $this->form = $this->formFactory->createNamed('', $formTypeClass, $this->criteria, [
+        $this->form = $this->formFactory->createNamed('', $this->criteria->getFormTypeClass(), $this->criteria, [
             'method' => 'GET',
         ]);
 
-        $this->handleRequest();
+        if ($handleRequest) {
+            $this->handleRequest();
+        }
 
-        $this->slice = $slicer ? $slicer($this->criteria) : [];
+        $this->slice = $slicer ? $slicer($this->criteria) : new \ArrayIterator();
         $this->count = $counter ? $counter($this->criteria) : 0;
+
+        if (! $this->slice instanceof \ArrayIterator) {
+            throw new UnexpectedSliceTypeException();
+        }
+
+        if (!is_int($this->count)) {
+            throw new UnexpectedCountTypeException();
+        }
     }
 
     public function handleRequest(): void

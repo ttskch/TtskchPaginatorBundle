@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Ttskch\PaginatorBundle\Entity;
 
-class Criteria
+use Ttskch\PaginatorBundle\Form\CriteriaType;
+
+class Criteria extends AbstractCriteria
 {
-    public $page;
-    public $limit;
-    public $sort;
-    public $direction;
+    public function getFormTypeClass(): ?string
+    {
+        return CriteriaType::class;
+    }
 }

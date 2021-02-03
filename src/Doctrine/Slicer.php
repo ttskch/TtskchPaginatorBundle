@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Ttskch\PaginatorBundle\Doctrine;
 
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Ttskch\PaginatorBundle\Entity\Criteria;
+use Ttskch\PaginatorBundle\Entity\AbstractCriteria;
 
 class Slicer extends Base
 {
     const ALIAS_PREFIX = 'ttskch_paginator_bundle';
 
-    public function __invoke(Criteria $criteria, bool $alreadyJoined = false): \ArrayIterator
+    public function __invoke(AbstractCriteria $criteria, bool $alreadyJoined = false): \ArrayIterator
     {
         $this->sortByCriteria($criteria, $alreadyJoined);
 
@@ -26,7 +26,7 @@ class Slicer extends Base
         return $paginator->getIterator();
     }
 
-    private function sortByCriteria(Criteria $criteria, bool $alreadyJoined): void
+    private function sortByCriteria(AbstractCriteria $criteria, bool $alreadyJoined): void
     {
         if (!$criteria->sort) {
             return;

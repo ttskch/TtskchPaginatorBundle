@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Ttskch\PaginatorBundle\Doctrine;
 
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Ttskch\PaginatorBundle\Entity\Criteria;
+use Ttskch\PaginatorBundle\Entity\AbstractCriteria;
 
 class Counter extends Base
 {
-    public function __invoke(Criteria $criteria): int
+    public function __invoke(AbstractCriteria $criteria): int
     {
         $paginator = new Paginator($this->qb, false);
 
