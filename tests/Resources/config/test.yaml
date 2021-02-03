@@ -22,3 +22,8 @@ ttskch_paginator:
   template:
     pager: pager.html.twig
     sortable: sortable.html.twig
+
+services:
+  twig.alias:
+    alias: twig
+    public: true

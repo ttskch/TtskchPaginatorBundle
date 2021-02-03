@@ -21,7 +21,7 @@ class TtskchPaginatorExtensionTest extends WebTestCase
         $context = $container->get('ttskch_paginator.context');
 
         /** @var Environment $twig */
-        $twig = $container->get('twig');
+        $twig = $container->get('twig.alias');
 
         $context->initialize(
             '',
@@ -68,7 +68,7 @@ EOT;
         $context = $container->get('ttskch_paginator.context');
 
         /** @var Environment $twig */
-        $twig = $container->get('twig');
+        $twig = $container->get('twig.alias');
 
         $context->initialize('name');
 
