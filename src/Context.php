@@ -78,7 +78,7 @@ class Context
         $this->slice = $slicer ? $slicer($this->criteria) : new \ArrayIterator();
         $this->count = $counter ? $counter($this->criteria) : 0;
 
-        if (! $this->slice instanceof \ArrayIterator) {
+        if (!is_iterable($this->slice)) {
             throw new UnexpectedSliceTypeException();
         }
 

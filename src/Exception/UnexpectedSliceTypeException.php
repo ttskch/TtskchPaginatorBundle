@@ -6,5 +6,5 @@ namespace Ttskch\PaginatorBundle\Exception;
 
 class UnexpectedSliceTypeException extends \LogicException
 {
-    protected $message = 'Returned value from "slicer" must be an instance of \\ArrayIterator';
+    protected $message = 'Returned value from "slicer" must be iterable';
 }
