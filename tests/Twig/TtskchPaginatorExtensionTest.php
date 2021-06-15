@@ -74,7 +74,7 @@ EOT;
 
         $SUT = new TtskchPaginatorExtension($context, $twig);
 
-        $text = $SUT->renderSortableLink('name', 'Name');
+        $text = $SUT->renderSortableLink('name');
 
         $expected = <<<EOT
 route
@@ -86,6 +86,22 @@ direction
 asc
 desc
 Name
+
+EOT;
+        $this->assertEquals($expected, $text);
+
+        $text = $SUT->renderSortableLink('name', '<small>Name</small>', true);
+
+        $expected = <<<EOT
+route
+route_param1=foo,route_param2=bar
+key1=value1,key2=value2,page=1
+sort
+name
+direction
+asc
+desc
+<small>Name</small>
 
 EOT;
         $this->assertEquals($expected, $text);

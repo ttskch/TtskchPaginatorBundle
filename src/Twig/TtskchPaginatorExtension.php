@@ -75,14 +75,14 @@ class TtskchPaginatorExtension extends AbstractExtension
         return $this->twig->render($templateName, $context);
     }
 
-    public function renderSortableLink(string $key, string $text = null, string $templateName = null, array $context = []) : string
+    public function renderSortableLink(string $key, string $label = null, bool $labelHtml = false, string $templateName = null, array $context = []) : string
     {
         $templateName = $templateName ?: $this->context->config->templateSortable;
 
         $isSorted = $key === $this->context->criteria->sort;
 
         $currentDirection = $isSorted ? $this->context->criteria->direction : null;
-        $nextDirection = $isSorted ? (strtolower($currentDirection) === 'asc' ? 'desc' : 'asc') : $this->context->config->sortDirectionDefault;
+        $nextDirection = $isSorted ? (strtolower((string) $currentDirection) === 'asc' ? 'desc' : 'asc') : $this->context->config->sortDirectionDefault;
 
         // reset page number after re-sorting.
         $queries = $this->context->request ? $this->context->request->query->all() : [];
@@ -97,7 +97,8 @@ class TtskchPaginatorExtension extends AbstractExtension
             'direction_name' => $this->context->config->sortDirectionName,
             'direction_current' => $currentDirection,
             'direction_next' => $nextDirection,
-            'text' => $text ?: ucwords($key),
+            'label' => $label ?: ucwords($key),
+            'label_html' => $labelHtml,
         ]);
 
         return $this->twig->render($templateName, $context);
