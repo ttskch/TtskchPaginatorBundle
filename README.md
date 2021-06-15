@@ -216,6 +216,7 @@ use Ttskch\PaginatorBundle\Entity\AbstractCriteria;
 
 class FooCriteria extends AbstractCriteria
 {
+    public $sort = 'id';
     public $query;
 
     public function getFormTypeClass(): ?string
@@ -293,7 +294,7 @@ private function createQueryBuilderFromCriteria(FooCriteria $criteria)
 public function index(FooRepository $fooRepository, Context $context)
 {
     $context->initialize(
-        'id',
+        null,
         [$fooRepository, 'sliceByCriteria'],
         [$fooRepository, 'countByCriteria'],
         new FooCriteria()
