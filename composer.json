@@ -23,6 +23,7 @@
     "require-dev": {
         "php": ">=7.2.5",
         "phpunit/phpunit": "^8.5",
+        "symfony/framework-bundle": "^5.1|^6.0",
         "symfony/phpunit-bridge": "^4.0|^5.0|^6.0",
         "symfony/yaml": "^4.0|^5.0|^6.0",
         "symfony/browser-kit": "^4.0|^5.0|^6.0",
