@@ -19,7 +19,7 @@ class TestKernel extends Kernel
 {
     use MicroKernelTrait;
 
-    public function registerBundles()
+    public function registerBundles(): iterable
     {
         return [
             new FrameworkBundle(),
