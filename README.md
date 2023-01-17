@@ -1,6 +1,6 @@
 # TtskchPaginatorBundle
 
-[![Travis (.com)](https://img.shields.io/travis/com/ttskch/TtskchPaginatorBundle.svg?style=flat-square)](https://travis-ci.com/ttskch/TtskchPaginatorBundle)
+[![](https://github.com/ttskch/TtskchPaginatorBundle/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/ttskch/TtskchPaginatorBundle/actions/workflows/ci.yaml?query=branch:main)
 [![Latest Stable Version](https://poser.pugx.org/ttskch/paginator-bundle/version?format=flat-square)](https://packagist.org/packages/ttskch/paginator-bundle)
 [![Total Downloads](https://poser.pugx.org/ttskch/paginator-bundle/downloads?format=flat-square)](https://packagist.org/packages/ttskch/paginator-bundle)
 
