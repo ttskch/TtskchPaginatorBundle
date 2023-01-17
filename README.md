@@ -16,7 +16,7 @@ The most thin and simple paginator bundle for Symfony.
 * Customizable **twig-templated views**
 * **Sortable link** feature
 * Easy to use with **search form**
-* Preset **bootstrap4 theme**
+* Preset **Bootstrap4/5 theme**
 
 ## Requirement
 
@@ -182,7 +182,7 @@ ttskch_paginator:
 
 ## Customizing views
 
-### Using preset bootstrap4 theme
+### Using preset Bootstrap4/5 theme
 
 Just configure bundle like below.
 
@@ -191,7 +191,8 @@ Just configure bundle like below.
 
 ttskch_paginator:
   template:
-    pager: '@TtskchPaginator/pager/bootstrap4.html.twig'
+    pager: '@TtskchPaginator/pager/bootstrap5.html.twig'
+#   pager: '@TtskchPaginator/pager/bootstrap4.html.twig'
 ```
 
 ### Using your own theme
