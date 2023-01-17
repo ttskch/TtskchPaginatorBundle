@@ -1,0 +1,58 @@
+<div class="clearfix">
+  <div class="float-start me-3">
+    <div class="input-group">
+      <span class="input-group-text">{% block page_status %}{{ item_left }} - {{ item_right }} / {{ item_last }}{% endblock %}</span>
+      <select class="form-select custom-select" onchange="location.href=this.querySelector('option:checked').getAttribute('data-link')">
+        {% for limit in selectable_limits|default([10, 25, 50, 100, 250, 500]) %}
+          <option data-link="{{ path(route, queries|merge(route_params)|merge({(limit_name): limit, (page_name): 1})) }}" {% if limit == limit_current %}selected{% endif %}>
+            {% block select_option_text %}{{ limit }}{% endblock %}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <ul class="pagination float-start">
+    {% block left %}
+      {% if page_left > page_first %}
+        <li class="page-item">
+          <a href="{{ path(route, queries|merge(route_params)|merge({(page_name): 1})) }}" class="page-link">1</a>
+        </li>
+      {% endif %}
+      {% if page_left > page_first + 1 %}
+        <li class="page-item disabled">
+          <span class="page-link">...</span>
+        </li>
+      {% endif %}
+    {% endblock %}
+
+    {% for page in page_left..page_right %}
+      {% set url = path(route, queries|merge(route_params)|merge({(page_name): page})) %}
+      {% if page == page_current %}
+        <li class="page-item active">
+          <span class="page-link">
+            {{ page }}
+          </span>
+        </li>
+      {% else %}
+        <li class="page-item">
+          <a href="{{ url }}" class="page-link">
+            {{ page }}
+          </a>
+        </li>
+      {% endif %}
+    {% endfor %}
+
+    {% block right %}
+      {% if page_right < page_last - 1 %}
+        <li class="page-item disabled">
+          <span class="page-link">...</span>
+        </li>
+      {% endif %}
+      {% if page_right < page_last %}
+        <li class="page-item">
+          <a href="{{ path(route, queries|merge(route_params)|merge({(page_name): page_last})) }}" class="page-link">{{ page_last }}</a>
+        </li>
+      {% endif %}
+    {% endblock %}
+  </ul>
+</div>
