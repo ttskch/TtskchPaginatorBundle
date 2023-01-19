@@ -1,8 +1,8 @@
-<div class="clearfix">
+<div id="ttskch-paginator-pager" class="clearfix">
   <div class="float-start me-3">
     <div class="input-group">
       <span class="input-group-text">{% block page_status %}{{ item_left }} - {{ item_right }} / {{ item_last }}{% endblock %}</span>
-      <select class="form-select custom-select" onchange="location.href=this.querySelector('option:checked').getAttribute('data-link')">
+      <select class="form-select" onchange="location.href=this.querySelector('option:checked').getAttribute('data-link')">
         {% for limit in selectable_limits|default([10, 25, 50, 100, 250, 500]) %}
           <option data-link="{{ path(route, queries|merge(route_params)|merge({(limit_name): limit, (page_name): 1})) }}" {% if limit == limit_current %}selected{% endif %}>
             {% block select_option_text %}{{ limit }}{% endblock %}
