@@ -57,7 +57,7 @@ class Context
         $this->formFactory = $formFactory;
     }
 
-    public function initialize(string $sortKey = null, callable $slicer = null, callable $counter = null, AbstractCriteria $criteria = null, bool $handleRequest = true): void
+    public function initialize(string $sortKey = null, callable $slicer = null, callable $counter = null, AbstractCriteria $criteria = null, array $formOptions = [], bool $handleRequest = true): void
     {
         $criteria = $criteria ?? new Criteria();
         $criteria->page = $criteria->page ?? 1;
@@ -67,9 +67,9 @@ class Context
 
         $this->criteria = $criteria;
 
-        $this->form = $this->formFactory->createNamed('', $this->criteria->getFormTypeClass(), $this->criteria, [
+        $this->form = $this->formFactory->createNamed('', $this->criteria->getFormTypeClass(), $this->criteria, array_merge([
             'method' => 'GET',
-        ]);
+        ], $formOptions));
 
         if ($handleRequest) {
             $this->handleRequest();
