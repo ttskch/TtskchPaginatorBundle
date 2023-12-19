@@ -56,6 +56,6 @@
         "sa": "@php -d memory_limit=-1 vendor-bin/tools/vendor/bin/phpstan analyse",
         "sa:clear": "vendor-bin/tools/vendor/bin/phpstan clear-result-cache",
         "test": "vendor/bin/phpunit",
-        "tests": ["@cs", "sa", "@test"]
+        "tests": ["@cs", "@test", "@sa"]
     }
 }
