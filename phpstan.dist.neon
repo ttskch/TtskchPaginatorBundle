@@ -1,0 +1,15 @@
+includes:
+  - vendor-bin/tools/vendor/phpstan/phpstan-strict-rules/rules.neon
+  - vendor-bin/tools/vendor/phpstan/phpstan-symfony/extension.neon
+  - vendor-bin/tools/vendor/jangregor/phpstan-prophecy/extension.neon
+
+parameters:
+  phpVersion: 80000 # 8.0
+  level: max
+  paths:
+    - src
+    - tests
+
+  # phpstan/phpstan-symfony
+  symfony:
+    containerXmlPath: var/cache/test/Ttskch_PaginatorBundle_TestKernelTestDebugContainer.xml
