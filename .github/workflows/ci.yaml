@@ -7,7 +7,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        php: [7.3, 7.4, 8.0, 8.1, 8.2]
+        php: [8.0, 8.1, 8.2, 8.3]
+        prefer-lowest: [false, true]
 
     runs-on: ${{ matrix.os }}
 
@@ -16,19 +17,26 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Cache Composer packages
-        id: composer-cache
-        uses: actions/cache@v2
+      - name: Get Composer cache directory path
+        id: composer-cache-dir-path
+        run: echo "path=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
         with:
-          path: vendor
+          path: ${{ steps.composer-cache-dir-path.outputs.path }}
           key: ${{ runner.os }}-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.php }}-composer-
+          restore-keys: ${{ runner.os }}-${{ matrix.php }}-composer-
 
-      - name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Install dependencies
+        if: ${{ !matrix.prefer-lowest }}
+        run: composer install -q --no-ansi --no-interaction --no-progress --prefer-dist
+
+      - name: Install lowest dependencies
+        if: ${{ matrix.prefer-lowest }}
+        run: composer update -q --no-ansi --no-interaction --no-progress --prefer-dist --prefer-lowest
 
       - name: Execute tests
-        run: composer test
+        run: composer tests
