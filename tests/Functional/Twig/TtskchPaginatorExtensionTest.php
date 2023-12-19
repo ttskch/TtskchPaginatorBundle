@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Ttskch\PaginatorBundle\Twig;
+namespace Ttskch\PaginatorBundle\Tests\Functional\Twig;
 
 use Ttskch\PaginatorBundle\Context;
 use Ttskch\PaginatorBundle\Criteria\Criteria;
-use Ttskch\PaginatorBundle\WebTestCase;
+use Ttskch\PaginatorBundle\Tests\Functional\WebTestCase;
+use Ttskch\PaginatorBundle\Twig\TtskchPaginatorExtension;
 use Twig\Environment;
 
 class TtskchPaginatorExtensionTest extends WebTestCase

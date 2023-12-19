@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ttskch\PaginatorBundle;
+namespace Ttskch\PaginatorBundle\Tests\Functional;
 
 use ComposerLockParser\ComposerInfo;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
@@ -27,7 +27,7 @@ class WebTestCase extends BaseWebTestCase
 
     private static function getFrameworkBundleVersionId(): int
     {
-        $composerInfo = new ComposerInfo(realpath(__DIR__.'/../composer.lock'));
+        $composerInfo = new ComposerInfo(__DIR__.'/../../composer.lock');
         $package = $composerInfo->getPackages()->getByName('symfony/framework-bundle');
         $version = ltrim($package->getVersion(), 'v');
 

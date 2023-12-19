@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ttskch\PaginatorBundle\Fake;
+namespace Ttskch\PaginatorBundle\Tests\Fake;
 
 use Symfony\Component\HttpFoundation\Response;
 

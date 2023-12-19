@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ttskch\PaginatorBundle;
+namespace Ttskch\PaginatorBundle\Tests\Functional;
 
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -10,9 +10,10 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Ttskch\PaginatorBundle\TtskchPaginatorBundle;
 
 /**
- * @see \Ttskch\PaginatorBundle\WebTestCase::getKernelClass()
+ * @see \Ttskch\PaginatorBundle\Tests\Functional\WebTestCase::getKernelClass()
  * @see https://zenn.dev/ttskch/articles/f9701ccf95d7c7
  * @see https://symfony.com/doc/current/configuration/micro_kernel_trait.html
  */
@@ -34,11 +35,11 @@ class TestKernelForFrameworkLowerThan50400 extends Kernel
      */
     protected function configureContainer(ContainerConfigurator $container): void
     {
-        $container->import(__DIR__.'/Resources/config/test.yaml');
+        $container->import(__DIR__.'/../Resources/config/test.yaml');
     }
 
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
-        $routes->import(__DIR__.'/Resources/config/routes.yaml');
+        $routes->import(__DIR__.'/../Resources/config/routes.yaml');
     }
 }
