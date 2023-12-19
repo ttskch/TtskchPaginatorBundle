@@ -24,6 +24,7 @@
         "twig/twig": ">=3.4.3"
     },
     "require-dev": {
+        "bamarni/composer-bin-plugin": "*",
         "doctrine/orm": "^2.17",
         "phpspec/prophecy-phpunit": "^2.1",
         "phpunit/phpunit": "^9.6",
@@ -34,12 +35,22 @@
         "symfony/yaml": "^5.0|^6.0|^7.0"
     },
     "config": {
-        "sort-packages": true,
         "allow-plugins": {
             "bamarni/composer-bin-plugin": true
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "bamarni-bin": {
+            "bin-links": false
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit"
+        "post-install-cmd": "@composer bin all install",
+        "post-update-cmd": "@composer bin all install",
+        "cs": "vendor-bin/tools/vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php --dry-run --diff -v src tests",
+        "cs:fix": "vendor-bin/tools/vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php src tests",
+        "test": "vendor/bin/phpunit",
+        "tests": ["@cs", "@test"]
     }
 }
