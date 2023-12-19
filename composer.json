@@ -1,6 +1,6 @@
 {
     "name": "ttskch/paginator-bundle",
-    "description": "The most thin and simple paginator bundle for Symfony",
+    "description": "The most thin, simple and customizable paginator bundle for Symfony",
     "keywords": ["symfony", "pager", "pagination", "paginator", "sortable", "customizable", "searchable"],
     "type": "symfony-bundle",
     "license": "MIT",

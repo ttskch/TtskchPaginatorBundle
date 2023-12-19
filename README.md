@@ -4,7 +4,7 @@
 [![Latest Stable Version](https://poser.pugx.org/ttskch/paginator-bundle/version?format=flat-square)](https://packagist.org/packages/ttskch/paginator-bundle)
 [![Total Downloads](https://poser.pugx.org/ttskch/paginator-bundle/downloads?format=flat-square)](https://packagist.org/packages/ttskch/paginator-bundle)
 
-The most thin and simple paginator bundle for Symfony.
+The most thin, simple and customizable paginator bundle for Symfony.
 
 ![](https://tva1.sinaimg.cn/large/007S8ZIlgy1gh5ti62x8yj31w50u0gst.jpg)
 
@@ -20,8 +20,8 @@ The most thin and simple paginator bundle for Symfony.
 
 ## Requirement
 
-* PHP >=7.1.3
-* Symfony ^4.0|^5.0|^6.0
+* PHP: ^8.0
+* Symfony: ^5.0|^6.0|^7.0
 
 ## Demo
 
@@ -52,16 +52,17 @@ return [
 // FooController.php
 
 use Ttskch\PaginatorBundle\Context;
+use Ttskch\PaginatorBundle\Criteria;
 use Ttskch\PaginatorBundle\Doctrine\Counter;
 use Ttskch\PaginatorBundle\Doctrine\Slicer;
 
-public function index(FooRepository $fooRepository, Context $context)
+public function index(FooRepository $fooRepository, Context $context): Response
 {
     $qb = $fooRepository->createQueryBuilder('f');
-    $context->initialize('id', new Slicer($qb), new Counter($qb));
+    $context->initialize(new Slicer($qb), new Counter($qb), new Criteria('id'));
 
     return $this->render('index.html.twig', [
-        'foos' => $context->slice,
+        'foos' => $context->getSlice(),
     ]);
 }
 ```
@@ -119,9 +120,10 @@ Implement slicer and counter by yourself like as following.
 // FooController.php
 
 use Ttskch\PaginatorBundle\Context;
-use Ttskch\PaginatorBundle\Entity\Criteria;
+use Ttskch\PaginatorBundle\Criteria;
+use Ttskch\PaginatorBundle\Criteria\Criteria;
 
-public function index(Context $context)
+public function index(Context $context): Response
 {
     $array = [
         ['id' => 1, 'name' => 'Tommy Yount', 'email' => 'tommy_yount@gmail.com'],
@@ -140,17 +142,13 @@ public function index(Context $context)
     ];
     
     $context->initialize(
-        'id',
-        function (Criteria $criteria) use ($array) {
-            return array_slice($array, $criteria->limit * ($criteria->page -1), $criteria->limit)
-        },
-        function () use ($array) {
-            return count($array);
-        }
+        fn (Criteria $criteria) => array_slice($array, $criteria->getLimit() * ($criteria->getPage() -1), $criteria->getLimit()),
+        fn () => count($array),
+        new Criteria('id'),
     );
 
     return $this->render('index.html.twig', [
-        'foos' => $context->slice,
+        'foos' => $context->getSlice(),
     ]);
 }
 ```
@@ -213,14 +211,18 @@ ttskch_paginator:
 ```php
 // FooCriteria.php
 
-use Ttskch\PaginatorBundle\Entity\AbstractCriteria;
+use Ttskch\PaginatorBundle\Criteria\AbstractCriteria;
 
 class FooCriteria extends AbstractCriteria
 {
-    public $sort = 'id';
-    public $query;
+    public ?string $query = null;
 
-    public function getFormTypeClass(): ?string
+    public function __construct(string $sort)
+    {
+        parent::__construct($sort);
+    }
+
+    public function getFormTypeClass(): string
     {
         return FooSearchType::class;
     }
@@ -230,29 +232,33 @@ class FooCriteria extends AbstractCriteria
 ```php
 // FooSearchType.php
 
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Ttskch\PaginatorBundle\Form\CriteriaType;
 
-class FooSearchType extends CriteriaType
+class FooSearchType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        parent::buildForm($builder, $options);
-
         $builder
             ->add('query', SearchType::class)
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => FooCriteria::class,
             // if your app depends on symfony/security-csrf adding below is recommended
             // 'csrf_protection' => false,
         ]);
+    }
+
+    public function getParent(): string
+    {
+        return CriteriaType::class;
     }
 }
 ```
@@ -263,7 +269,7 @@ class FooSearchType extends CriteriaType
 use Ttskch\PaginatorBundle\Doctrine\Counter;
 use Ttskch\PaginatorBundle\Doctrine\Slicer;
 
-public function sliceByCriteria(FooCriteria $criteria)
+public function sliceByCriteria(FooCriteria $criteria): \Traversable
 {
     $qb = $this->createQueryBuilderFromCriteria($criteria);
     $slicer = new Slicer($qb);
@@ -271,15 +277,15 @@ public function sliceByCriteria(FooCriteria $criteria)
     return $slicer($criteria);
 }
 
-public function countByCriteria(FooCriteria $criteria)
+public function countByCriteria(FooCriteria $criteria): int
 {
     $qb = $this->createQueryBuilderFromCriteria($criteria);
     $counter = new Counter($qb);
 
-    return $counter($criteria);
+    return $counter();
 }
 
-private function createQueryBuilderFromCriteria(FooCriteria $criteria)
+private function createQueryBuilderFromCriteria(FooCriteria $criteria): QueryBuilder
 {
     return $this->createQueryBuilder('f')
         ->orWhere('f.name like :query')
@@ -292,18 +298,17 @@ private function createQueryBuilderFromCriteria(FooCriteria $criteria)
 ```php
 // FooController.php
 
-public function index(FooRepository $fooRepository, Context $context)
+public function index(FooRepository $fooRepository, Context $context): Response
 {
     $context->initialize(
-        null,
         [$fooRepository, 'sliceByCriteria'],
         [$fooRepository, 'countByCriteria'],
-        new FooCriteria()
+        new FooCriteria('id'),
     );
 
     return $this->render('index.html.twig', [
-        'foos' => $context->slice,
-        'form' => $context->form->createView(),
+        'foos' => $context->getSlice(),
+        'form' => $context->getForm()->createView(),
     ]);
 }
 ```
@@ -343,23 +348,23 @@ public function index(FooRepository $fooRepository, Context $context)
 use Ttskch\PaginatorBundle\Doctrine\Counter;
 use Ttskch\PaginatorBundle\Doctrine\Slicer;
 
-public function sliceByCriteria(FooCriteria $criteria)
+public function sliceByCriteria(FooCriteria $criteria): \Traversable
 {
     $qb = $this->createQueryBuilderFromCriteria($criteria);
     $slicer = new Slicer($qb);
 
-    return $slicer($criteria, $alreadyJoined = true); // *
+    return $slicer($criteria, $alreadyJoined = true); // **PAY ATTENTION HERE**
 }
 
-public function countByCriteria(FooCriteria $criteria)
+public function countByCriteria(FooCriteria $criteria): int
 {
     $qb = $this->createQueryBuilderFromCriteria($criteria);
     $counter = new Counter($qb);
 
-    return $counter($criteria);
+    return $counter();
 }
 
-private function createQueryBuilderFromCriteria(FooCriteria $criteria)
+private function createQueryBuilderFromCriteria(FooCriteria $criteria): QueryBuilder
 {
     return $this->createQueryBuilder('f')
         ->leftJoin('f.bar', 'bar')
@@ -376,18 +381,17 @@ private function createQueryBuilderFromCriteria(FooCriteria $criteria)
 ```php
 // FooController.php
 
-public function index(FooRepository $fooRepository, Context $context)
+public function index(FooRepository $fooRepository, Context $context): Response
 {
     $context->initialize(
-        'f.id',
         [$fooRepository, 'sliceByCriteria'],
         [$fooRepository, 'countByCriteria'],
-        new FooCriteria()
+        new FooCriteria('f.id')
     );
 
     return $this->render('index.html.twig', [
-        'foos' => $context->slice,
-        'form' => $context->form->createView(),
+        'foos' => $context->getSlice(),
+        'form' => $context->getForm()->createView(),
     ]);
 }
 ```
