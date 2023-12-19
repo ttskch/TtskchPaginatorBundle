@@ -14,10 +14,10 @@ use Symfony\Component\Routing\RouteCollectionBuilder;
 
 /**
  * @see \Ttskch\PaginatorBundle\WebTestCase::getKernelClass()
- * @see https://tech.quartetcom.co.jp/2016/12/19/functional-testing-syfony-bundle/
+ * @see https://zenn.dev/ttskch/articles/f9701ccf95d7c7
  * @see https://symfony.com/doc/current/configuration/micro_kernel_trait.html
  */
-class TestKernelForBC extends Kernel
+class TestKernelForFrameworkLowerThan50100 extends Kernel
 {
     use MicroKernelTrait;
 

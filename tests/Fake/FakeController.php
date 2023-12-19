@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FakeController
 {
-    public function index()
+    public function index(): Response
     {
         return new Response();
     }

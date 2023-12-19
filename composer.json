@@ -4,6 +4,8 @@
     "keywords": ["symfony", "pager", "pagination", "paginator", "sortable", "customizable", "searchable"],
     "type": "symfony-bundle",
     "license": "MIT",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "Ttskch\\PaginatorBundle\\": "src/"
@@ -32,7 +34,8 @@
         "symfony/framework-bundle": "^5.0|^6.0|^7.0",
         "symfony/phpunit-bridge": "^7.0",
         "symfony/twig-bundle": "^5.0|^6.0|^7.0",
-        "symfony/yaml": "^5.0|^6.0|^7.0"
+        "symfony/yaml": "^5.0|^6.0|^7.0",
+        "t4web/composer-lock-parser": "dev-master"
     },
     "config": {
         "allow-plugins": {

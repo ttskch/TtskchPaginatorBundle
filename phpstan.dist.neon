@@ -15,3 +15,11 @@ parameters:
   # phpstan/phpstan-symfony
   symfony:
     containerXmlPath: var/cache/test/Ttskch_PaginatorBundle_TestKernelTestDebugContainer.xml
+
+  excludePaths:
+    - tests/TestKernelForFrameworkLowerThan50400.php
+    - tests/TestKernelForFrameworkLowerThan50100.php
+
+  ignoreErrors:
+    - message: '#Method Ttskch\\PaginatorBundle\\TestKernel::configure\S+\(\) is unused\.#'
+      path: tests/TestKernel.php

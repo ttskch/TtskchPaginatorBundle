@@ -24,6 +24,9 @@ ttskch_paginator:
     sortable: sortable.html.twig
 
 services:
-  twig.alias:
+  Ttskch\PaginatorBundle\Context.pub:
+    alias: Ttskch\PaginatorBundle\Context
+    public: true
+  twig.pub:
     alias: twig
     public: true
