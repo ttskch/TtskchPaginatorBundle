@@ -9,7 +9,7 @@ use Ttskch\PaginatorBundle\Entity\AbstractCriteria;
 
 class Slicer extends Base
 {
-    const ALIAS_PREFIX = 'ttskch_paginator_bundle';
+    public const ALIAS_PREFIX = 'ttskch_paginator_bundle';
 
     public function __invoke(AbstractCriteria $criteria, bool $alreadyJoined = false): \ArrayIterator
     {

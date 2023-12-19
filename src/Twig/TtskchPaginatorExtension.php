@@ -27,9 +27,6 @@ class TtskchPaginatorExtension extends AbstractExtension
         $this->twig = $twig;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions(): array
     {
         return [
@@ -45,7 +42,7 @@ class TtskchPaginatorExtension extends AbstractExtension
         $currentPage = $this->context->criteria->page;
         $firstPage = 1;
         $lastPage = max(1, intval(ceil($this->context->count / $this->context->criteria->limit)));
-        $leftPage = max($currentPage - (intval(floor(($this->context->config->pageRange - 1) / 2))), $firstPage);
+        $leftPage = max($currentPage - intval(floor(($this->context->config->pageRange - 1) / 2)), $firstPage);
         $rightPage = min($leftPage + $this->context->config->pageRange - 1, $lastPage);
         if ($rightPage === $lastPage) {
             $leftPage = max($rightPage - $this->context->config->pageRange + 1, $firstPage);
@@ -57,7 +54,7 @@ class TtskchPaginatorExtension extends AbstractExtension
         $context = array_merge($context, [
             'route' => $this->context->request ? $this->context->request->get('_route') : null,
             'route_params' => $this->context->request ? $this->context->request->get('_route_params') : null,
-            'queries' => $this->context->request ? $this->context->request->query->all(): [],
+            'queries' => $this->context->request ? $this->context->request->query->all() : [],
             'limit_name' => $this->context->config->limitName,
             'limit_current' => $this->context->criteria->limit,
             'page_name' => $this->context->config->pageName,
@@ -75,14 +72,14 @@ class TtskchPaginatorExtension extends AbstractExtension
         return $this->twig->render($templateName, $context);
     }
 
-    public function renderSortableLink(string $key, string $label = null, bool $labelHtml = false, string $templateName = null, array $context = []) : string
+    public function renderSortableLink(string $key, string $label = null, bool $labelHtml = false, string $templateName = null, array $context = []): string
     {
         $templateName = $templateName ?: $this->context->config->templateSortable;
 
         $isSorted = $key === $this->context->criteria->sort;
 
         $currentDirection = $isSorted ? $this->context->criteria->direction : null;
-        $nextDirection = $isSorted ? (strtolower((string) $currentDirection) === 'asc' ? 'desc' : 'asc') : $this->context->config->sortDirectionDefault;
+        $nextDirection = $isSorted ? ('asc' === strtolower((string) $currentDirection) ? 'desc' : 'asc') : $this->context->config->sortDirectionDefault;
 
         // reset page number after re-sorting.
         $queries = $this->context->request ? $this->context->request->query->all() : [];
