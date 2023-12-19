@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace Ttskch\PaginatorBundle;
 
+/**
+ * @internal
+ */
 class Config
 {
-    public $pageName;
-    public $pageRange;
-    public $limitName;
-    public $limitDefault;
-    public $sortKeyName;
-    public $sortDirectionName;
-    public $sortDirectionDefault;
-    public $templatePager;
-    public $templateSortable;
+    public string $pageName;
+    public int $pageRange;
+    public string $limitName;
+    public int $limitDefault;
+    public string $sortKeyName;
+    public string $sortDirectionName;
+    /** @var 'asc'|'desc' */
+    public string $sortDirectionDefault;
+    public string $templatePager;
+    public string $templateSortable;
 }

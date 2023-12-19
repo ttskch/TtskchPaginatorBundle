@@ -6,5 +6,8 @@ namespace Ttskch\PaginatorBundle\Exception;
 
 class UnexpectedCountTypeException extends \LogicException
 {
-    protected $message = 'Returned value from "counter" must be an integer';
+    public function __construct(int $code = 0, \Throwable $previous = null)
+    {
+        parent::__construct('Returned value from "counter" must be an integer.', $code, $previous);
+    }
 }

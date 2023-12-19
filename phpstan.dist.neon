@@ -10,6 +10,8 @@ parameters:
     - src
     - tests
 
+  treatPhpDocTypesAsCertain: false
+
   # phpstan/phpstan-symfony
   symfony:
     containerXmlPath: var/cache/test/Ttskch_PaginatorBundle_TestKernelTestDebugContainer.xml

@@ -1,7 +1,5 @@
 services:
-  ttskch_paginator.config:
-    public: true
-    class: Ttskch\PaginatorBundle\Config
+  Ttskch\PaginatorBundle\Config:
     properties:
       pageName: '%ttskch_paginator.page.name%'
       pageRange: '%ttskch_paginator.page.range%'
@@ -13,19 +11,14 @@ services:
       templatePager: '%ttskch_paginator.template.pager%'
       templateSortable: '%ttskch_paginator.template.sortable%'
 
-  ttskch_paginator.context:
-    public: true
-    class: Ttskch\PaginatorBundle\Context
+  Ttskch\PaginatorBundle\Context:
     arguments:
-      - '@ttskch_paginator.config'
-      - '@request_stack'
+      - '@Ttskch\PaginatorBundle\Config'
       - '@form.factory'
+      - '@request_stack'
 
   Ttskch\PaginatorBundle\Twig\TtskchPaginatorExtension:
-    tags: { name: twig.extension }
     arguments:
-      - '@ttskch_paginator.context'
+      - '@Ttskch\PaginatorBundle\Context'
       - '@twig'
-
-  # alias for autowiring
-  Ttskch\PaginatorBundle\Context: '@ttskch_paginator.context'
+    tags: {name: twig.extension}
