@@ -82,7 +82,7 @@ class TtskchPaginatorExtension extends AbstractExtension
         $counterDirection = CriteriaInterface::ASC === $currentDirection ? CriteriaInterface::DESC : CriteriaInterface::ASC;
         $nextDirection = $isSorted ? $counterDirection : $this->context->getConfig()->sortDirectionDefault;
 
-        // reset page number after re-sorting.
+        // Reset page number after re-sorting.
         $queries = $this->context->getRequest()?->query->all() ?? [];
         $queries[$this->context->getConfig()->pageName] = 1;
 

@@ -71,8 +71,23 @@ class Context
             throw new UninitializedContextException();
         }
 
+        // Map configured key names to actual key names.
+        $map = [
+            'page' => $this->config->pageName,
+            'limit' => $this->config->limitName,
+            'sort' => $this->config->sortKeyName,
+            'direction' => $this->config->sortDirectionName,
+        ];
+        $submittedData = $this->request?->query->all();
+        foreach ($map as $actualKey => $configuredKey) {
+            if ($actualKey !== $configuredKey && isset($submittedData[$configuredKey])) {
+                $submittedData[$actualKey] = $submittedData[$configuredKey];
+                unset($submittedData[$configuredKey]);
+            }
+        }
+
         // Don't use Form::handleRequest() because it will clear properties corresponding empty queries.
-        $this->form->submit($this->request?->query->all(), false);
+        $this->form->submit($submittedData, false);
     }
 
     public function getConfig(): Config
