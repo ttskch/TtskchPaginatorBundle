@@ -11,7 +11,7 @@ The most thin, simple and customizable paginator bundle for Symfony.
 ## Features
 
 * So **light weight**
-* **Depeds on nothing** without Symfony
+* **Depends on nothing** without Symfony
 * But also easy to use with **Doctrine ORM**
 * Customizable **twig-templated views**
 * **Sortable link** feature
