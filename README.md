@@ -6,7 +6,7 @@
 
 The most thin, simple and customizable paginator bundle for Symfony.
 
-![](https://tva1.sinaimg.cn/large/007S8ZIlgy1gh5ti62x8yj31w50u0gst.jpg)
+![](https://github.com/ttskch/TtskchPaginatorBundle/assets/4360663/b1e72eb4-ba61-4307-a153-8be46290cf27)
 
 ## Features
 
