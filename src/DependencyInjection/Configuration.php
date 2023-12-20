@@ -6,19 +6,13 @@ namespace Ttskch\PaginatorBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\HttpKernel\Kernel;
 
 class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        if (Kernel::VERSION_ID < 40300) {
-            $treeBuilder = new TreeBuilder();
-            $rootNode = $treeBuilder->root('ttskch_paginator', 'array');
-        } else {
-            $treeBuilder = new TreeBuilder('ttskch_paginator');
-            $rootNode = $treeBuilder->getRootNode();
-        }
+        $treeBuilder = new TreeBuilder('ttskch_paginator');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->addDefaultsIfNotSet()
             ->children()

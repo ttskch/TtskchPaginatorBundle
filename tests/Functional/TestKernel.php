@@ -2,18 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Ttskch\PaginatorBundle;
+namespace Ttskch\PaginatorBundle\Tests\Functional;
 
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\TwigBundle\TwigBundle;
+use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Ttskch\PaginatorBundle\TtskchPaginatorBundle;
 
 /**
  * @see \Ttskch\PaginatorBundle\WebTestCase::getKernelClass()
- * @see https://tech.quartetcom.co.jp/2016/12/19/functional-testing-syfony-bundle/
+ * @see https://zenn.dev/ttskch/articles/f9701ccf95d7c7
  * @see https://symfony.com/doc/current/configuration/micro_kernel_trait.html
  */
 class TestKernel extends Kernel
@@ -29,13 +32,13 @@ class TestKernel extends Kernel
         ];
     }
 
-    protected function configureContainer(ContainerConfigurator $c)
+    private function configureContainer(ContainerConfigurator $container, LoaderInterface $loader, ContainerBuilder $builder): void
     {
-        $c->import(__DIR__.'/Resources/config/test.yaml');
+        $container->import(__DIR__.'/../Resources/config/test.yaml');
     }
 
-    protected function configureRoutes(RoutingConfigurator $routes)
+    private function configureRoutes(RoutingConfigurator $routes): void
     {
-        $routes->import(__DIR__.'/Resources/config/routes.yaml');
+        $routes->import(__DIR__.'/../Resources/config/routes.yaml');
     }
 }

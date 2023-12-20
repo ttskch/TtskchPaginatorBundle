@@ -1,0 +1,25 @@
+includes:
+  - vendor-bin/tools/vendor/phpstan/phpstan-strict-rules/rules.neon
+  - vendor-bin/tools/vendor/phpstan/phpstan-symfony/extension.neon
+  - vendor-bin/tools/vendor/jangregor/phpstan-prophecy/extension.neon
+
+parameters:
+  phpVersion: 80000 # 8.0
+  level: max
+  paths:
+    - src
+    - tests
+
+  treatPhpDocTypesAsCertain: false
+
+  # phpstan/phpstan-symfony
+  symfony:
+    containerXmlPath: var/cache/test/Ttskch_PaginatorBundle_Tests_Functional_TestKernelTestDebugContainer.xml
+
+  excludePaths:
+    - tests/Functional/TestKernelForFrameworkLowerThan50400.php
+    - tests/Functional/TestKernelForFrameworkLowerThan50100.php
+
+  ignoreErrors:
+    - message: '#Method Ttskch\\PaginatorBundle\\Tests\\Functional\\TestKernel::configure\S+\(\) is unused\.#'
+      path: tests/Functional/TestKernel.php

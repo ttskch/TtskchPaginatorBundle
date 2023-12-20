@@ -8,66 +8,45 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Ttskch\PaginatorBundle\Entity\AbstractCriteria;
-use Ttskch\PaginatorBundle\Entity\Criteria;
+use Ttskch\PaginatorBundle\Criteria\CriteriaInterface;
 use Ttskch\PaginatorBundle\Exception\UnexpectedCountTypeException;
-use Ttskch\PaginatorBundle\Exception\UnexpectedSliceTypeException;
+use Ttskch\PaginatorBundle\Exception\UninitializedContextException;
 
 class Context
 {
-    /**
-     * @var \ArrayIterator
-     */
-    public $slice;
+    private mixed $slice = null;
+    private ?int $count = null;
+    private ?CriteriaInterface $criteria = null;
+    private ?FormInterface $form = null;
+    private ?Request $request;
 
-    /**
-     * @var int
-     */
-    public $count;
-
-    /**
-     * @var AbstractCriteria
-     */
-    public $criteria;
-
-    /**
-     * @var FormInterface
-     */
-    public $form;
-
-    /**
-     * @var Config
-     */
-    public $config;
-
-    /**
-     * @var Request|null
-     */
-    public $request;
-
-    /**
-     * @var FormFactoryInterface
-     */
-    private $formFactory;
-
-    public function __construct(Config $config, RequestStack $requestStack, FormFactoryInterface $formFactory)
-    {
-        $this->config = $config;
+    public function __construct(
+        private Config $config,
+        private FormFactoryInterface $formFactory,
+        RequestStack $requestStack,
+    ) {
         $this->request = $requestStack->getCurrentRequest();
-        $this->formFactory = $formFactory;
     }
 
-    public function initialize(string $sortKey = null, callable $slicer = null, callable $counter = null, AbstractCriteria $criteria = null, array $formOptions = [], bool $handleRequest = true): void
-    {
-        $criteria = $criteria ?? new Criteria();
-        $criteria->page = $criteria->page ?? 1;
-        $criteria->limit = $criteria->limit ?? $this->config->limitDefault;
-        $criteria->sort = $criteria->sort ?? $sortKey;
-        $criteria->direction = $criteria->direction ?? $this->config->sortDirectionDefault;
-
+    /**
+     * @param callable(CriteriaInterface): mixed $slicer
+     * @param callable(CriteriaInterface): int   $counter
+     * @param array<string, mixed>               $formOptions
+     */
+    public function initialize(
+        callable $slicer,
+        callable $counter,
+        CriteriaInterface $criteria,
+        array $formOptions = [],
+        bool $handleRequest = true,
+    ): void {
         $this->criteria = $criteria;
 
-        $this->form = $this->formFactory->createNamed('', $this->criteria->getFormTypeClass(), $this->criteria, array_merge([
+        $criteria->setPage(1);
+        $criteria->setLimit($this->config->limitDefault);
+        $criteria->setDirection($this->config->sortDirectionDefault);
+
+        $this->form = $this->formFactory->createNamed('', $this->criteria->getFormTypeClass(), $criteria, array_merge([
             'method' => 'GET',
         ], $formOptions));
 
@@ -75,21 +54,81 @@ class Context
             $this->handleRequest();
         }
 
-        $this->slice = $slicer ? $slicer($this->criteria) : new \ArrayIterator();
-        $this->count = $counter ? $counter($this->criteria) : 0;
+        $this->slice = $slicer($criteria);
 
-        if (!is_iterable($this->slice)) {
-            throw new UnexpectedSliceTypeException();
-        }
+        $count = $counter($criteria);
 
-        if (!is_int($this->count)) {
+        if (!is_int($count)) {
             throw new UnexpectedCountTypeException();
         }
+
+        $this->count = $count;
     }
 
     public function handleRequest(): void
     {
+        if (null === $this->form) {
+            throw new UninitializedContextException();
+        }
+
+        // Map configured key names to actual key names.
+        $map = [
+            'page' => $this->config->pageName,
+            'limit' => $this->config->limitName,
+            'sort' => $this->config->sortKeyName,
+            'direction' => $this->config->sortDirectionName,
+        ];
+        $submittedData = $this->request?->query->all();
+        foreach ($map as $actualKey => $configuredKey) {
+            if ($actualKey !== $configuredKey && isset($submittedData[$configuredKey])) {
+                $submittedData[$actualKey] = $submittedData[$configuredKey];
+                unset($submittedData[$configuredKey]);
+            }
+        }
+
         // Don't use Form::handleRequest() because it will clear properties corresponding empty queries.
-        $this->form->submit($this->request ? $this->request->query->all() : null, false);
+        $this->form->submit($submittedData, false);
+    }
+
+    public function getConfig(): Config
+    {
+        return $this->config;
+    }
+
+    public function getSlice(): mixed
+    {
+        return $this->slice;
+    }
+
+    public function getCount(): int
+    {
+        if (null === $this->count) {
+            throw new UninitializedContextException();
+        }
+
+        return $this->count;
+    }
+
+    public function getCriteria(): CriteriaInterface
+    {
+        if (null === $this->criteria) {
+            throw new UninitializedContextException();
+        }
+
+        return $this->criteria;
+    }
+
+    public function getForm(): FormInterface
+    {
+        if (null === $this->form) {
+            throw new UninitializedContextException();
+        }
+
+        return $this->form;
+    }
+
+    public function getRequest(): ?Request
+    {
+        return $this->request;
     }
 }

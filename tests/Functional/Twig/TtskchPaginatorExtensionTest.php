@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Ttskch\PaginatorBundle\Twig;
+namespace Ttskch\PaginatorBundle\Tests\Functional\Twig;
 
 use Ttskch\PaginatorBundle\Context;
-use Ttskch\PaginatorBundle\WebTestCase;
+use Ttskch\PaginatorBundle\Criteria\Criteria;
+use Ttskch\PaginatorBundle\Tests\Functional\WebTestCase;
+use Ttskch\PaginatorBundle\Twig\TtskchPaginatorExtension;
 use Twig\Environment;
 
 class TtskchPaginatorExtensionTest extends WebTestCase
@@ -17,18 +19,16 @@ class TtskchPaginatorExtensionTest extends WebTestCase
         $container = $client->getContainer();
         $container->get('request_stack')->push($client->getRequest());
 
-        /** @var Context $context */
-        $context = $container->get('ttskch_paginator.context');
+        $context = $container->get(Context::class.'.pub');
+        assert($context instanceof Context);
 
-        /** @var Environment $twig */
-        $twig = $container->get('twig.alias');
+        $twig = $container->get('twig.pub');
+        assert($twig instanceof Environment);
 
         $context->initialize(
-            '',
-            null,
-            function () {
-                return 5;
-            }
+            fn () => [],
+            fn () => 5,
+            new Criteria(''),
         );
 
         $SUT = new TtskchPaginatorExtension($context, $twig);
@@ -54,7 +54,7 @@ page
 
 EOT;
 
-        $this->assertEquals($expected, $text);
+        self::assertEquals($expected, $text);
     }
 
     public function testRenderSortableLink(): void
@@ -65,12 +65,16 @@ EOT;
         $container->get('request_stack')->push($client->getRequest());
 
         /** @var Context $context */
-        $context = $container->get('ttskch_paginator.context');
+        $context = $container->get(Context::class.'.pub');
 
         /** @var Environment $twig */
-        $twig = $container->get('twig.alias');
+        $twig = $container->get('twig.pub');
 
-        $context->initialize('name');
+        $context->initialize(
+            fn () => [],
+            fn () => 0,
+            new Criteria('name'),
+        );
 
         $SUT = new TtskchPaginatorExtension($context, $twig);
 
@@ -88,7 +92,7 @@ desc
 Name
 
 EOT;
-        $this->assertEquals($expected, $text);
+        self::assertEquals($expected, $text);
 
         $text = $SUT->renderSortableLink('name', '<small>Name</small>', true);
 
@@ -104,6 +108,6 @@ desc
 <small>Name</small>
 
 EOT;
-        $this->assertEquals($expected, $text);
+        self::assertEquals($expected, $text);
     }
 }

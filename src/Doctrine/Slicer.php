@@ -5,13 +5,21 @@ declare(strict_types=1);
 namespace Ttskch\PaginatorBundle\Doctrine;
 
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Ttskch\PaginatorBundle\Entity\AbstractCriteria;
+use Ttskch\PaginatorBundle\Criteria\CriteriaInterface;
 
+/**
+ * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html#first-and-max-result-items-dql-query-only
+ * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/tutorials/pagination.html
+ * @see https://stackoverflow.com/questions/14884183/doctrine-querybuilder-limit-and-offset#answer-14886847
+ */
 class Slicer extends Base
 {
-    const ALIAS_PREFIX = 'ttskch_paginator_bundle';
+    public const ALIAS_PREFIX = 'ttskch_paginator_bundle';
 
-    public function __invoke(AbstractCriteria $criteria, bool $alreadyJoined = false): \ArrayIterator
+    /**
+     * @return \Traversable<array-key, mixed>
+     */
+    public function __invoke(CriteriaInterface $criteria, bool $alreadyJoined = false): \Traversable
     {
         $this->sortByCriteria($criteria, $alreadyJoined);
 
@@ -19,28 +27,29 @@ class Slicer extends Base
         $paginator = new Paginator($this->qb, true);
 
         $paginator->getQuery()
-            ->setFirstResult($criteria->limit * ($criteria->page - 1))
-            ->setMaxResults($criteria->limit)
+            ->setFirstResult($criteria->getLimit() * ($criteria->getPage() - 1))
+            ->setMaxResults($criteria->getLimit())
         ;
 
         return $paginator->getIterator();
     }
 
-    private function sortByCriteria(AbstractCriteria $criteria, bool $alreadyJoined): void
+    private function sortByCriteria(CriteriaInterface $criteria, bool $alreadyJoined): void
     {
-        if (!$criteria->sort) {
-            return;
-        }
-
         if ($alreadyJoined) {
-            $this->qb->orderBy($criteria->sort, $criteria->direction);
+            $this->qb->orderBy($criteria->getSort(), $criteria->getDirection());
 
             return;
         }
 
-        $columns = explode('.', $criteria->sort);
+        $columns = explode('.', $criteria->getSort());
 
-        $alias = $this->qb->getRootAliases()[0];
+        $alias = $this->qb->getRootAliases()[0] ?? null;
+
+        if (null === $alias) {
+            throw new \RuntimeException('Root alias not found.');
+        }
+
         $sortColumn = end($columns);
         $columnsToJoin = array_slice($columns, 0, -1);
 
@@ -48,6 +57,6 @@ class Slicer extends Base
             $this->qb->leftJoin(sprintf('%s.%s', $alias, $column), $alias = sprintf('%s_%s', self::ALIAS_PREFIX, $i));
         }
 
-        $this->qb->orderBy(sprintf('%s.%s', $alias, $sortColumn), $criteria->direction);
+        $this->qb->orderBy(sprintf('%s.%s', $alias, $sortColumn), $criteria->getDirection());
     }
 }
