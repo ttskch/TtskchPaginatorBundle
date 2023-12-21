@@ -4,7 +4,7 @@ framework:
 
 twig:
   paths:
-    tests/Resources/views: ~
+    tests/Functional/templates: ~
 
 ttskch_paginator:
   page:
@@ -24,12 +24,7 @@ ttskch_paginator:
     sortable: sortable.html.twig
 
 services:
-  Ttskch\PaginatorBundle\Config.pub:
-    alias: Ttskch\PaginatorBundle\Config
-    public: true
-  Ttskch\PaginatorBundle\Paginator.pub:
-    alias: Ttskch\PaginatorBundle\Paginator
-    public: true
-  twig.pub:
-    alias: twig
-    public: true
+  Ttskch\PaginatorBundle\Tests\Functional\Controller\TestController:
+    autowire: true
+    autoconfigure: true
+    tags: [controller.service_arguments]

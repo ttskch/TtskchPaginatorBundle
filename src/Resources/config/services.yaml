@@ -18,8 +18,10 @@ services:
       - '@request_stack'
 
   Ttskch\PaginatorBundle\Twig\TtskchPaginatorExtension:
+    tags: {name: twig.extension}
+
+  Ttskch\PaginatorBundle\Twig\TtskchPaginatorRuntime:
     arguments:
       - '@Ttskch\PaginatorBundle\Config'
       - '@Ttskch\PaginatorBundle\Paginator'
-      - '@twig'
-    tags: {name: twig.extension}
+    tags: {name: twig.runtime}
