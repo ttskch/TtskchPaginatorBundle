@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Ttskch\PaginatorBundle\Tests\Functional\Twig;
 
-use Ttskch\PaginatorBundle\Context;
+use Ttskch\PaginatorBundle\Config;
+use Ttskch\PaginatorBundle\Counter\CallbackCounter;
 use Ttskch\PaginatorBundle\Criteria\Criteria;
+use Ttskch\PaginatorBundle\Paginator;
+use Ttskch\PaginatorBundle\Slicer\CallbackSlicer;
 use Ttskch\PaginatorBundle\Tests\Functional\WebTestCase;
 use Ttskch\PaginatorBundle\Twig\TtskchPaginatorExtension;
 use Twig\Environment;
@@ -19,19 +22,22 @@ class TtskchPaginatorExtensionTest extends WebTestCase
         $container = $client->getContainer();
         $container->get('request_stack')->push($client->getRequest());
 
-        $context = $container->get(Context::class.'.pub');
-        assert($context instanceof Context);
+        $config = $container->get(Config::class.'.pub');
+        assert($config instanceof Config);
+
+        $paginator = $container->get(Paginator::class.'.pub');
+        assert($paginator instanceof Paginator);
 
         $twig = $container->get('twig.pub');
         assert($twig instanceof Environment);
 
-        $context->initialize(
-            fn () => [],
-            fn () => 5,
+        $paginator->initialize(
+            new CallbackSlicer(fn () => []),
+            new CallbackCounter(fn () => 5),
             new Criteria(''),
         );
 
-        $SUT = new TtskchPaginatorExtension($context, $twig);
+        $SUT = new TtskchPaginatorExtension($config, $paginator, $twig);
 
         $text = $SUT->renderPager();
 
@@ -64,19 +70,22 @@ EOT;
         $container = $client->getContainer();
         $container->get('request_stack')->push($client->getRequest());
 
-        /** @var Context $context */
-        $context = $container->get(Context::class.'.pub');
+        $config = $container->get(Config::class.'.pub');
+        assert($config instanceof Config);
 
-        /** @var Environment $twig */
+        $paginator = $container->get(Paginator::class.'.pub');
+        assert($paginator instanceof Paginator);
+
         $twig = $container->get('twig.pub');
+        assert($twig instanceof Environment);
 
-        $context->initialize(
-            fn () => [],
-            fn () => 0,
+        $paginator->initialize(
+            new CallbackSlicer(fn () => []),
+            new CallbackCounter(fn () => 0),
             new Criteria('name'),
         );
 
-        $SUT = new TtskchPaginatorExtension($context, $twig);
+        $SUT = new TtskchPaginatorExtension($config, $paginator, $twig);
 
         $text = $SUT->renderSortableLink('name');
 

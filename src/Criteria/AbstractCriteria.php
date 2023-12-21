@@ -8,10 +8,17 @@ use Ttskch\PaginatorBundle\Exception\UninitializedCriteriaException;
 
 abstract class AbstractCriteria implements CriteriaInterface
 {
+    /** @readonly */
     protected ?int $page = null;
+    /** @readonly */
     protected ?int $limit = null;
+    /** @readonly */
     protected string $sort;
-    /** @var 'asc'|'desc'|null */
+    /**
+     * @var 'asc'|'desc'|null
+     *
+     * @readonly
+     */
     protected ?string $direction = null;
 
     public function __construct(string $sort)

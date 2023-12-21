@@ -4,19 +4,24 @@ declare(strict_types=1);
 
 namespace Ttskch\PaginatorBundle\Twig;
 
-use Ttskch\PaginatorBundle\Context;
+use Ttskch\PaginatorBundle\Config;
 use Ttskch\PaginatorBundle\Criteria\CriteriaInterface;
+use Ttskch\PaginatorBundle\Paginator;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-/**
- * @internal
- */
 class TtskchPaginatorExtension extends AbstractExtension
 {
+    /**
+     * @param Paginator<covariant mixed, covariant CriteriaInterface> $paginator
+     */
     public function __construct(
-        private Context $context,
+        /** @readonly */
+        private Config $config,
+        /** @readonly */
+        private Paginator $paginator,
+        /** @readonly */
         private Environment $twig,
     ) {
     }
@@ -34,27 +39,27 @@ class TtskchPaginatorExtension extends AbstractExtension
      */
     public function renderPager(string $templateName = null, array $context = []): string
     {
-        $templateName ??= $this->context->getConfig()->templatePager;
+        $templateName ??= $this->config->templatePager;
 
-        $currentPage = $this->context->getCriteria()->getPage();
+        $currentPage = $this->paginator->getCriteria()->getPage();
         $firstPage = 1;
-        $lastPage = max(1, intval(ceil($this->context->getCount() / $this->context->getCriteria()->getLimit())));
-        $leftPage = max($currentPage - intval(floor(($this->context->getConfig()->pageRange - 1) / 2)), $firstPage);
-        $rightPage = min($leftPage + $this->context->getConfig()->pageRange - 1, $lastPage);
+        $lastPage = max(1, intval(ceil($this->paginator->getCount() / $this->paginator->getCriteria()->getLimit())));
+        $leftPage = max($currentPage - intval(floor(($this->config->pageRange - 1) / 2)), $firstPage);
+        $rightPage = min($leftPage + $this->config->pageRange - 1, $lastPage);
         if ($rightPage === $lastPage) {
-            $leftPage = max($rightPage - $this->context->getConfig()->pageRange + 1, $firstPage);
+            $leftPage = max($rightPage - $this->config->pageRange + 1, $firstPage);
         }
 
-        $rightItem = min($this->context->getCount(), $this->context->getCriteria()->getLimit() * $this->context->getCriteria()->getPage());
-        $leftItem = min($rightItem, $this->context->getCriteria()->getLimit() * ($this->context->getCriteria()->getPage() - 1) + 1);
+        $rightItem = min($this->paginator->getCount(), $this->paginator->getCriteria()->getLimit() * $this->paginator->getCriteria()->getPage());
+        $leftItem = min($rightItem, $this->paginator->getCriteria()->getLimit() * ($this->paginator->getCriteria()->getPage() - 1) + 1);
 
         $context = array_merge($context, [
-            'route' => $this->context->getRequest()?->get('_route'),
-            'route_params' => $this->context->getRequest()?->get('_route_params'),
-            'queries' => $this->context->getRequest()?->query->all() ?? [],
-            'limit_name' => $this->context->getConfig()->limitName,
-            'limit_current' => $this->context->getCriteria()->getLimit(),
-            'page_name' => $this->context->getConfig()->pageName,
+            'route' => $this->paginator->getRequest()?->get('_route'),
+            'route_params' => $this->paginator->getRequest()?->get('_route_params'),
+            'queries' => $this->paginator->getRequest()?->query->all() ?? [],
+            'limit_name' => $this->config->limitName,
+            'limit_current' => $this->paginator->getCriteria()->getLimit(),
+            'page_name' => $this->config->pageName,
             'page_current' => $currentPage,
             'page_left' => $leftPage,
             'page_right' => $rightPage,
@@ -63,7 +68,7 @@ class TtskchPaginatorExtension extends AbstractExtension
             'item_left' => $leftItem,
             'item_right' => $rightItem,
             'item_first' => 1,
-            'item_last' => $this->context->getCount(),
+            'item_last' => $this->paginator->getCount(),
         ]);
 
         return $this->twig->render($templateName, $context);
@@ -74,25 +79,25 @@ class TtskchPaginatorExtension extends AbstractExtension
      */
     public function renderSortableLink(string $key, string $label = null, bool $labelHtml = false, string $templateName = null, array $context = []): string
     {
-        $templateName ??= $this->context->getConfig()->templateSortable;
+        $templateName ??= $this->config->templateSortable;
 
-        $isSorted = $key === $this->context->getCriteria()->getSort();
+        $isSorted = $key === $this->paginator->getCriteria()->getSort();
 
-        $currentDirection = $isSorted ? $this->context->getCriteria()->getDirection() : '';
+        $currentDirection = $isSorted ? $this->paginator->getCriteria()->getDirection() : '';
         $counterDirection = CriteriaInterface::ASC === $currentDirection ? CriteriaInterface::DESC : CriteriaInterface::ASC;
-        $nextDirection = $isSorted ? $counterDirection : $this->context->getConfig()->sortDirectionDefault;
+        $nextDirection = $isSorted ? $counterDirection : $this->config->sortDirectionDefault;
 
         // Reset page number after re-sorting.
-        $queries = $this->context->getRequest()?->query->all() ?? [];
-        $queries[$this->context->getConfig()->pageName] = 1;
+        $queries = $this->paginator->getRequest()?->query->all() ?? [];
+        $queries[$this->config->pageName] = 1;
 
         $context = array_merge($context, [
-            'route' => $this->context->getRequest()?->get('_route'),
-            'route_params' => $this->context->getRequest()?->get('_route_params'),
+            'route' => $this->paginator->getRequest()?->get('_route'),
+            'route_params' => $this->paginator->getRequest()?->get('_route_params'),
             'queries' => $queries,
-            'key_name' => $this->context->getConfig()->sortKeyName,
+            'key_name' => $this->config->sortKeyName,
             'key' => $key,
-            'direction_name' => $this->context->getConfig()->sortDirectionName,
+            'direction_name' => $this->config->sortDirectionName,
             'direction_current' => $currentDirection,
             'direction_next' => $nextDirection,
             'label' => $label ?? ucwords($key),

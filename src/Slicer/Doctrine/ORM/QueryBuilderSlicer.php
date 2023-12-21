@@ -1,29 +1,44 @@
 <?php
-
-declare(strict_types=1);
-
-namespace Ttskch\PaginatorBundle\Doctrine;
-
-use Doctrine\ORM\Tools\Pagination\Paginator;
-use Ttskch\PaginatorBundle\Criteria\CriteriaInterface;
-
 /**
  * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html#first-and-max-result-items-dql-query-only
  * @see https://www.doctrine-project.org/projects/doctrine-orm/en/latest/tutorials/pagination.html
  * @see https://stackoverflow.com/questions/14884183/doctrine-querybuilder-limit-and-offset#answer-14886847
  */
-class Slicer extends Base
+declare(strict_types=1);
+
+namespace Ttskch\PaginatorBundle\Slicer\Doctrine\ORM;
+
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Ttskch\PaginatorBundle\Criteria\CriteriaInterface;
+use Ttskch\PaginatorBundle\Slicer\SlicerInterface;
+
+/**
+ * @template-covariant T
+ *
+ * @implements SlicerInterface<\Traversable<array-key, T>>
+ */
+final class QueryBuilderSlicer implements SlicerInterface
 {
     public const ALIAS_PREFIX = 'ttskch_paginator_bundle';
 
+    public function __construct(
+        /** @readonly */
+        private QueryBuilder $qb,
+        /** @readonly */
+        private bool $alreadyJoined = false,
+    ) {
+    }
+
     /**
-     * @return \Traversable<array-key, mixed>
+     * @return \Traversable<array-key, T>
      */
-    public function __invoke(CriteriaInterface $criteria, bool $alreadyJoined = false): \Traversable
+    public function slice(CriteriaInterface $criteria): \Traversable
     {
-        $this->sortByCriteria($criteria, $alreadyJoined);
+        $this->sortByCriteria($criteria, $this->alreadyJoined);
 
         // @see https://stackoverflow.com/questions/50199102/setmaxresults-does-not-works-fine-when-doctrine-query-has-join/50203939#answer-50203939
+        /** @var Paginator<T> $paginator */
         $paginator = new Paginator($this->qb, true);
 
         $paginator->getQuery()

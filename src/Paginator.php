@@ -8,34 +8,42 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Ttskch\PaginatorBundle\Counter\CounterInterface;
 use Ttskch\PaginatorBundle\Criteria\CriteriaInterface;
-use Ttskch\PaginatorBundle\Exception\UnexpectedCountTypeException;
-use Ttskch\PaginatorBundle\Exception\UninitializedContextException;
+use Ttskch\PaginatorBundle\Exception\UninitializedPaginatorException;
+use Ttskch\PaginatorBundle\Slicer\SlicerInterface;
 
-class Context
+/**
+ * @template TSlice
+ * @template TCriteria of CriteriaInterface
+ */
+class Paginator
 {
+    /** @var TSlice|null */
     private mixed $slice = null;
     private ?int $count = null;
+    /** @var TCriteria|null */
     private ?CriteriaInterface $criteria = null;
     private ?FormInterface $form = null;
-    private ?Request $request;
 
     public function __construct(
+        /** @readonly */
         private Config $config,
+        /** @readonly */
         private FormFactoryInterface $formFactory,
-        RequestStack $requestStack,
+        /** @readonly */
+        private RequestStack $requestStack,
     ) {
-        $this->request = $requestStack->getCurrentRequest();
     }
 
     /**
-     * @param callable(CriteriaInterface): mixed $slicer
-     * @param callable(CriteriaInterface): int   $counter
-     * @param array<string, mixed>               $formOptions
+     * @param SlicerInterface<TSlice> $slicer
+     * @param TCriteria               $criteria
+     * @param array<string, mixed>    $formOptions
      */
     public function initialize(
-        callable $slicer,
-        callable $counter,
+        SlicerInterface $slicer,
+        CounterInterface $counter,
         CriteriaInterface $criteria,
         array $formOptions = [],
         bool $handleRequest = true,
@@ -54,23 +62,12 @@ class Context
             $this->handleRequest();
         }
 
-        $this->slice = $slicer($criteria);
-
-        $count = $counter($criteria);
-
-        if (!is_int($count)) {
-            throw new UnexpectedCountTypeException();
-        }
-
-        $this->count = $count;
+        $this->slice = $slicer->slice($criteria);
+        $this->count = $counter->count($criteria);
     }
 
     public function handleRequest(): void
     {
-        if (null === $this->form) {
-            throw new UninitializedContextException();
-        }
-
         // Map configured key names to actual key names.
         $map = [
             'page' => $this->config->pageName,
@@ -78,7 +75,7 @@ class Context
             'sort' => $this->config->sortKeyName,
             'direction' => $this->config->sortDirectionName,
         ];
-        $submittedData = $this->request?->query->all();
+        $submittedData = $this->requestStack->getCurrentRequest()?->query->all();
         foreach ($map as $actualKey => $configuredKey) {
             if ($actualKey !== $configuredKey && isset($submittedData[$configuredKey])) {
                 $submittedData[$actualKey] = $submittedData[$configuredKey];
@@ -87,14 +84,12 @@ class Context
         }
 
         // Don't use Form::handleRequest() because it will clear properties corresponding empty queries.
-        $this->form->submit($submittedData, false);
+        $this->getForm()->submit($submittedData, false);
     }
 
-    public function getConfig(): Config
-    {
-        return $this->config;
-    }
-
+    /**
+     * @return TSlice|null
+     */
     public function getSlice(): mixed
     {
         return $this->slice;
@@ -103,16 +98,19 @@ class Context
     public function getCount(): int
     {
         if (null === $this->count) {
-            throw new UninitializedContextException();
+            throw new UninitializedPaginatorException();
         }
 
         return $this->count;
     }
 
+    /**
+     * @return TCriteria
+     */
     public function getCriteria(): CriteriaInterface
     {
         if (null === $this->criteria) {
-            throw new UninitializedContextException();
+            throw new UninitializedPaginatorException();
         }
 
         return $this->criteria;
@@ -121,7 +119,7 @@ class Context
     public function getForm(): FormInterface
     {
         if (null === $this->form) {
-            throw new UninitializedContextException();
+            throw new UninitializedPaginatorException();
         }
 
         return $this->form;
@@ -129,6 +127,6 @@ class Context
 
     public function getRequest(): ?Request
     {
-        return $this->request;
+        return $this->requestStack->getCurrentRequest();
     }
 }
