@@ -32,11 +32,11 @@ jobs:
 
       - name: Install dependencies
         if: ${{ !matrix.prefer-lowest }}
-        run: composer install -q --no-ansi --no-interaction --no-progress --prefer-dist
+        run: composer install --no-interaction --no-progress --prefer-dist
 
       - name: Install lowest dependencies
         if: ${{ matrix.prefer-lowest }}
-        run: composer update -q --no-ansi --no-interaction --no-progress --prefer-dist --prefer-lowest
+        run: composer update --no-interaction --no-progress --prefer-dist --prefer-lowest
 
       - name: Execute tests
         if: ${{ !matrix.prefer-lowest }}
