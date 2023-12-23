@@ -79,9 +79,9 @@ public function index(FooRepository $fooRepository, Paginator $paginator): Respo
 <table>
   <thead>
   <tr>
-    <th>{{ ttskch_paginator_sortable('id') }}</th>
-    <th>{{ ttskch_paginator_sortable('name') }}</th>
-    <th>{{ ttskch_paginator_sortable('email') }}</th>
+    <th>{{ ttskch_paginator_sortable('id', 'Id') }}</th>
+    <th>{{ ttskch_paginator_sortable('name', 'Name') }}</th>
+    <th>{{ ttskch_paginator_sortable('email', 'Email') }}</th>
   </tr>
   </thead>
   <tbody>
@@ -109,9 +109,9 @@ Just do like as following.
 
 {# ... #}
 
-<th>{{ ttskch_paginator_sortable('id') }}</th>
-<th>{{ ttskch_paginator_sortable('name') }}</th>
-<th>{{ ttskch_paginator_sortable('email') }}</th>
+<th>{{ ttskch_paginator_sortable('id', 'Id') }}</th>
+<th>{{ ttskch_paginator_sortable('name', 'Name') }}</th>
+<th>{{ ttskch_paginator_sortable('email', 'Email') }}</th>
 <th>{{ ttskch_paginator_sortable('bar.id', 'Bar') }}</th>
 <th>{{ ttskch_paginator_sortable('bar.baz.id', 'Baz') }}</th>
 
@@ -376,9 +376,9 @@ public function index(FooRepository $fooRepository, Paginator $paginator): Respo
 <table>
     <thead>
     <tr>
-        <th>{{ ttskch_paginator_sortable('id') }}</th>
-        <th>{{ ttskch_paginator_sortable('name') }}</th>
-        <th>{{ ttskch_paginator_sortable('email') }}</th>
+        <th>{{ ttskch_paginator_sortable('id', 'Id') }}</th>
+        <th>{{ ttskch_paginator_sortable('name', 'Name') }}</th>
+        <th>{{ ttskch_paginator_sortable('email', 'Email') }}</th>
     </tr>
     </thead>
     <tbody>
