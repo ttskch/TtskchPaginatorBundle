@@ -34,11 +34,11 @@ class TestKernel extends Kernel
 
     private function configureContainer(ContainerConfigurator $container, LoaderInterface $loader, ContainerBuilder $builder): void
     {
-        $container->import(__DIR__.'/../Resources/config/test.yaml');
+        $container->import(__DIR__.'/config/test.yaml');
     }
 
     private function configureRoutes(RoutingConfigurator $routes): void
     {
-        $routes->import(__DIR__.'/../Resources/config/routes.yaml');
+        $routes->import(__DIR__.'/config/routes.yaml');
     }
 }

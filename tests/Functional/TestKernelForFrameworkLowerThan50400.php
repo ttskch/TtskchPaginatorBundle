@@ -35,11 +35,11 @@ class TestKernelForFrameworkLowerThan50400 extends Kernel
      */
     protected function configureContainer(ContainerConfigurator $container): void
     {
-        $container->import(__DIR__.'/../Resources/config/test.yaml');
+        $container->import(__DIR__.'/config/test.yaml');
     }
 
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
-        $routes->import(__DIR__.'/../Resources/config/routes.yaml');
+        $routes->import(__DIR__.'/config/routes.yaml');
     }
 }

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"></li>
+    <li class="breadcrumb-item">
+      <a href="{{ path('user_index') }}">Users</a>
+    </li>
+    <li class="breadcrumb-item active">
+      {{ user }}
+    </li>
+  </ol>
+
+  <div class="table-responsive">
+    <table class="table table-sm table-hover">
+      <tbody>
+      <tr>
+        <th>Id</th>
+        <td>{{ user.id }}</td>
+      </tr>
+      <tr>
+        <th>Name</th>
+        <td>{{ user.name }}</td>
+      </tr>
+      <tr>
+        <th>Email</th>
+        <td>{{ user.email }}</td>
+      </tr>
+      <tr>
+        <th>How many posts</th>
+        <td>{{ user.posts|length }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <a href="{{ path('user_index') }}">Back to index</a>
+{% endblock %}

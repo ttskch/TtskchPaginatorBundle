@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+
+  {% block stylesheets %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://use.fontawesome.com/releases/v6.5.1/css/all.css" rel="stylesheet">
+    <style>
+      .table-responsive .table th, .table-nowrap .table th {
+        white-space: nowrap;
+        word-break: keep-all;
+      }
+      .table-responsive .table td, .table-nowrap .table td {
+        word-break: keep-all;
+      }
+      .asc:after {
+        content: '\f0d8'; /* caret-up */
+        font-family: 'Font Awesome 6 Free';
+        margin-left: 0.2em;
+      }
+      .desc:after {
+        content: '\f0d7'; /* caret-down */
+        font-family: 'Font Awesome 6 Free';
+        margin-left: 0.2em;
+      }
+    </style>
+  {% endblock %}
+
+  <title>{% block title %}ttskch/paginator-bundle{% endblock %}</title>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-light bg-light mb-3">
+  <div class="container-fluid">
+    <a href="{{ path('home_index') }}" class="navbar-brand">{{ block('title') }}</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapse-1" aria-controls="navbar-collapse-1" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse mt-2 mt-lg-0" id="navbar-collapse-1">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a href="{{ path('user_index') }}" class="nav-link">Users</a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ path('post_index') }}" class="nav-link">Posts</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a href="https://github.com/ttskch/TtskchPaginatorBundle" target="_blank" class="nav-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> GitHub</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid">
+  {% block content %}
+  {% endblock %}
+</div>
+
+{% block javascripts %}
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+{% endblock %}
+</body>
+</html>

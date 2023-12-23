@@ -11,14 +11,17 @@ services:
       templatePager: '%ttskch_paginator.template.pager%'
       templateSortable: '%ttskch_paginator.template.sortable%'
 
-  Ttskch\PaginatorBundle\Context:
+  Ttskch\PaginatorBundle\Paginator:
     arguments:
       - '@Ttskch\PaginatorBundle\Config'
       - '@form.factory'
       - '@request_stack'
 
   Ttskch\PaginatorBundle\Twig\TtskchPaginatorExtension:
-    arguments:
-      - '@Ttskch\PaginatorBundle\Context'
-      - '@twig'
     tags: {name: twig.extension}
+
+  Ttskch\PaginatorBundle\Twig\TtskchPaginatorRuntime:
+    arguments:
+      - '@Ttskch\PaginatorBundle\Config'
+      - '@Ttskch\PaginatorBundle\Paginator'
+    tags: {name: twig.runtime}

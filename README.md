@@ -11,14 +11,16 @@ The most thin, simple and customizable paginator bundle for Symfony.
 ## Features
 
 * So **light weight**
-* **Depends on nothing** without Symfony
+* **Well typed** (PHPStan level max)
+* **Depends on nothing** other than Symfony and Twig
 * But also easy to use with **Doctrine ORM**
+* Of course **can paginate everything**
 * Customizable **twig-templated views**
-* **Sortable link** feature
-* Easy to use with **search form**
-* Preset **Bootstrap4/5 theme**
+* Very easy-to-use **sortable link** feature
+* Easy to use with **your own search form**
+* Preset beautiful **Bootstrap4/5 theme**
 
-## Requirement
+## Requirements
 
 * PHP: ^8.0
 * Symfony: ^5.0|^6.0|^7.0
@@ -27,7 +29,7 @@ The most thin, simple and customizable paginator bundle for Symfony.
 
 👉 [Live demo is here](https://ttskchpaginatorbundle.herokuapp.com)
 
-You can also see a sample code on [demo branch](https://github.com/ttskch/TtskchPaginatorBundle/tree/demo).
+You can also see a sample code on [`demo/` directory](demo).
 
 ## Installation
 
@@ -51,18 +53,22 @@ return [
 ```php
 // FooController.php
 
-use Ttskch\PaginatorBundle\Context;
-use Ttskch\PaginatorBundle\Criteria;
-use Ttskch\PaginatorBundle\Doctrine\Counter;
-use Ttskch\PaginatorBundle\Doctrine\Slicer;
+use Symfony\Component\HttpFoundation\Response;
+use Ttskch\PaginatorBundle\Counter\Doctrine\ORM\QueryBuilderCounter;
+use Ttskch\PaginatorBundle\Criteria\Criteria;
+use Ttskch\PaginatorBundle\Paginator;
+use Ttskch\PaginatorBundle\Slicer\Doctrine\ORM\QueryBuilderSlicer;
 
-public function index(FooRepository $fooRepository, Context $context): Response
+/**
+ * @param Paginator<\Traversable<array-key, Foo>, Criteria> $paginator
+ */
+public function index(FooRepository $fooRepository, Paginator $paginator): Response
 {
     $qb = $fooRepository->createQueryBuilder('f');
-    $context->initialize(new Slicer($qb), new Counter($qb), new Criteria('id'));
+    $paginator->initialize(new QueryBuilderSlicer($qb), new QueryBuilderCounter($qb), new Criteria('id'));
 
     return $this->render('index.html.twig', [
-        'foos' => $context->getSlice(),
+        'foos' => $paginator->getSlice(),
     ]);
 }
 ```
@@ -114,16 +120,19 @@ Just do like as following.
 
 ### With array
 
-Implement slicer and counter by yourself like as following.
-
 ```php
 // FooController.php
 
-use Ttskch\PaginatorBundle\Context;
-use Ttskch\PaginatorBundle\Criteria;
+use Symfony\Component\HttpFoundation\Response;
+use Ttskch\PaginatorBundle\Counter\ArrayCounter;
 use Ttskch\PaginatorBundle\Criteria\Criteria;
+use Ttskch\PaginatorBundle\Paginator;
+use Ttskch\PaginatorBundle\Slicer\ArraySlicer;
 
-public function index(Context $context): Response
+/**
+ * @param Paginator<array<array{id: int, name: string, email: string}>, Criteria> $paginator
+ */
+public function index(Paginator $paginator): Response
 {
     $array = [
         ['id' => 1, 'name' => 'Tommy Yount', 'email' => 'tommy_yount@gmail.com'],
@@ -140,15 +149,51 @@ public function index(Context $context): Response
         ['id' => 299, 'name' => 'Deshawn Kennedy', 'email' => 'deshawn_kennedy@gmail.com'],
         ['id' => 300, 'name' => 'Elenore Evens', 'email' => 'elenore_evens@gmail.com'],
     ];
-    
-    $context->initialize(
-        fn (Criteria $criteria) => array_slice($array, $criteria->getLimit() * ($criteria->getPage() -1), $criteria->getLimit()),
-        fn () => count($array),
+
+    $paginator->initialize(
+        new ArraySlicer($array),
+        new ArrayCounter($array),
         new Criteria('id'),
     );
 
     return $this->render('index.html.twig', [
-        'foos' => $context->getSlice(),
+        'foos' => $paginator->getSlice(),
+    ]);
+}
+```
+
+### With something other data
+
+Implement slicer and counter by yourself like as following.
+
+```php
+use Symfony\Component\HttpFoundation\Response;
+use Ttskch\PaginatorBundle\Counter\CallbackCounter;
+use Ttskch\PaginatorBundle\Criteria\Criteria;
+use Ttskch\PaginatorBundle\Paginator;
+use Ttskch\PaginatorBundle\Slicer\CallbackSlicer;
+
+/**
+ * @param Paginator<TypeOfYourOwnSlice>, Criteria> $paginator
+ */
+public function index(Paginator $paginator): Response
+{
+    $yourOwnData = /* ... */;
+
+    $paginator->initialize(
+        new CallbackSlicer(function (Criteria $criteria) use ($yourOwnData) {
+            /* ... */
+            return $yourOwnSlice;
+        }),
+        new CallbackCounter(function (Criteria $criteria) use ($yourOwnData) {
+            /* ... */
+            return $totalItemsCount;
+        }),
+        new Criteria('default_sort_key'),
+    );
+
+    return $this->render('index.html.twig', [
+        'yourOwnSlice' => $paginator->getSlice(),
     ]);
 }
 ```
@@ -266,23 +311,24 @@ class FooSearchType extends AbstractType
 ```php
 // FooRepository.php
 
-use Ttskch\PaginatorBundle\Doctrine\Counter;
-use Ttskch\PaginatorBundle\Doctrine\Slicer;
+use Doctrine\ORM\QueryBuilder;
+use Ttskch\PaginatorBundle\Counter\Doctrine\ORM\QueryBuilderCounter;
+use Ttskch\PaginatorBundle\Slicer\Doctrine\ORM\QueryBuilderSlicer;
 
 public function sliceByCriteria(FooCriteria $criteria): \Traversable
 {
     $qb = $this->createQueryBuilderFromCriteria($criteria);
-    $slicer = new Slicer($qb);
+    $slicer = new QueryBuilderSlicer($qb);
 
-    return $slicer($criteria);
+    return $slicer->slice($criteria);
 }
 
 public function countByCriteria(FooCriteria $criteria): int
 {
     $qb = $this->createQueryBuilderFromCriteria($criteria);
-    $counter = new Counter($qb);
+    $counter = new QueryBuilderCounter($qb);
 
-    return $counter();
+    return $counter->count($criteria);
 }
 
 private function createQueryBuilderFromCriteria(FooCriteria $criteria): QueryBuilder
@@ -298,17 +344,26 @@ private function createQueryBuilderFromCriteria(FooCriteria $criteria): QueryBui
 ```php
 // FooController.php
 
-public function index(FooRepository $fooRepository, Context $context): Response
+use Symfony\Component\HttpFoundation\Response;
+use Ttskch\PaginatorBundle\Paginator;
+
+/**
+ * @param Paginator<\Traversable<array-key, Foo>, FooCriteria> $paginator
+ */
+public function index(FooRepository $fooRepository, Paginator $paginator): Response
 {
-    $context->initialize(
-        [$fooRepository, 'sliceByCriteria'],
-        [$fooRepository, 'countByCriteria'],
+    $paginator->initialize(
+        \Closure::fromCallable([$fooRepository, 'sliceByCriteria']),
+        \Closure::fromCallable([$fooRepository, 'countByCriteria']),
+        // or if PHP >= 8.1
+        // $fooRepository->sliceByCriteria(...),
+        // $fooRepository->countByCriteria(...),
         new FooCriteria('id'),
     );
 
     return $this->render('index.html.twig', [
-        'foos' => $context->getSlice(),
-        'form' => $context->getForm()->createView(),
+        'foos' => $paginator->getSlice(),
+        'form' => $paginator->getForm()->createView(),
     ]);
 }
 ```
@@ -345,23 +400,24 @@ public function index(FooRepository $fooRepository, Context $context): Response
 ```php
 // FooRepository.php
 
-use Ttskch\PaginatorBundle\Doctrine\Counter;
-use Ttskch\PaginatorBundle\Doctrine\Slicer;
+use Doctrine\ORM\QueryBuilder;
+use Ttskch\PaginatorBundle\Counter\Doctrine\ORM\QueryBuilderCounter;
+use Ttskch\PaginatorBundle\Slicer\Doctrine\ORM\QueryBuilderSlicer;
 
 public function sliceByCriteria(FooCriteria $criteria): \Traversable
 {
     $qb = $this->createQueryBuilderFromCriteria($criteria);
-    $slicer = new Slicer($qb);
+    $slicer = new QueryBuilderSlicer($qb, alreadyJoined: true); // **PAY ATTENTION HERE**
 
-    return $slicer($criteria, $alreadyJoined = true); // **PAY ATTENTION HERE**
+    return $slicer->slice($criteria);
 }
 
 public function countByCriteria(FooCriteria $criteria): int
 {
     $qb = $this->createQueryBuilderFromCriteria($criteria);
-    $counter = new Counter($qb);
+    $counter = new QueryBuilderCounter($qb);
 
-    return $counter();
+    return $counter->count($criteria);
 }
 
 private function createQueryBuilderFromCriteria(FooCriteria $criteria): QueryBuilder
@@ -381,17 +437,26 @@ private function createQueryBuilderFromCriteria(FooCriteria $criteria): QueryBui
 ```php
 // FooController.php
 
-public function index(FooRepository $fooRepository, Context $context): Response
+use Symfony\Component\HttpFoundation\Response;
+use Ttskch\PaginatorBundle\Paginator;
+
+/**
+ * @param Paginator<\Traversable<array-key, Foo>, FooCriteria> $paginator
+ */
+public function index(FooRepository $fooRepository, Paginator $paginator): Response
 {
-    $context->initialize(
-        [$fooRepository, 'sliceByCriteria'],
-        [$fooRepository, 'countByCriteria'],
+    $paginator->initialize(
+        \Closure::fromCallable([$fooRepository, 'sliceByCriteria']),
+        \Closure::fromCallable([$fooRepository, 'countByCriteria']),
+        // or if PHP >= 8.1
+        // $fooRepository->sliceByCriteria(...),
+        // $fooRepository->countByCriteria(...),
         new FooCriteria('f.id')
     );
 
     return $this->render('index.html.twig', [
-        'foos' => $context->getSlice(),
-        'form' => $context->getForm()->createView(),
+        'foos' => $paginator->getSlice(),
+        'form' => $paginator->getForm()->createView(),
     ]);
 }
 ```

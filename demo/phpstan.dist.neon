@@ -1,0 +1,16 @@
+includes:
+  - vendor/phpstan/phpstan-strict-rules/rules.neon
+  - vendor/phpstan/phpstan-symfony/extension.neon
+
+parameters:
+  phpVersion: 80200 # 8.2
+  level: max
+  paths:
+    - ./src
+    - ./tests
+
+  treatPhpDocTypesAsCertain: false
+
+  # phpstan/phpstan-symfony
+  symfony:
+    containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml

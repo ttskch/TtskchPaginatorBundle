@@ -1,0 +1,7 @@
+test_pager:
+  path: /test/pager/{route_param1}/{route_param2}
+  controller: Ttskch\PaginatorBundle\Tests\Functional\Controller\TestController::pager
+
+test_sortable:
+  path: /test/sortable/{route_param1}/{route_param2}
+  controller: Ttskch\PaginatorBundle\Tests\Functional\Controller\TestController::sortable

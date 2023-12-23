@@ -32,11 +32,11 @@ jobs:
 
       - name: Install dependencies
         if: ${{ !matrix.prefer-lowest }}
-        run: composer install -q --no-ansi --no-interaction --no-progress --prefer-dist
+        run: composer install --no-interaction --no-progress --prefer-dist
 
       - name: Install lowest dependencies
         if: ${{ matrix.prefer-lowest }}
-        run: composer update -q --no-ansi --no-interaction --no-progress --prefer-dist --prefer-lowest
+        run: composer update --no-interaction --no-progress --prefer-dist --prefer-lowest
 
       - name: Execute tests
         if: ${{ !matrix.prefer-lowest }}
@@ -45,3 +45,16 @@ jobs:
       - name: Execute tests for lowest dependencies
         if: ${{ matrix.prefer-lowest }}
         run: composer tests:bc
+
+  deploy-demo:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: akhileshns/heroku-deploy@v3.12.14
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ttskchpaginatorbundle
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          appdir: demo

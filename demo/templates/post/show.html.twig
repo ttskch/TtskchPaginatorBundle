@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"></li>
+    <li class="breadcrumb-item">
+      <a href="{{ path('post_index') }}">Posts</a>
+    </li>
+    <li class="breadcrumb-item active">
+      <a href="{{ path('user_show', {id: post.user.id}) }}">{{ post.user }}</a>
+    </li>
+    <li class="breadcrumb-item active">
+      {{ post.date|date('Y-m-d') }}
+    </li>
+  </ol>
+
+  <div class="table-responsive">
+    <table class="table table-sm table-hover">
+      <tbody>
+      <tr>
+        <th>Id</th>
+        <td>{{ post.id }}</td>
+      </tr>
+      <tr>
+        <th>Subject</th>
+        <td>{{ post.subject }}</td>
+      </tr>
+      <tr>
+        <th>Body</th>
+        <td>{{ post.body|nl2br }}</td>
+      </tr>
+      <tr>
+        <th>Date</th>
+        <td>{{ post.date|date('Y-m-d') }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <a href="{{ path('post_index') }}">Back to index</a>
+{% endblock %}

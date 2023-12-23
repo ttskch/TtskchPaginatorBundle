@@ -1,0 +1,30 @@
+framework:
+  test: true
+  secret: test
+
+twig:
+  paths:
+    tests/Functional/templates: ~
+
+ttskch_paginator:
+  page:
+    name: page
+    range: 2
+  limit:
+    name: limit
+    default: 2
+  sort:
+    key:
+      name: sort
+    direction:
+      name: direction
+      default: asc
+  template:
+    pager: pager.html.twig
+    sortable: sortable.html.twig
+
+services:
+  Ttskch\PaginatorBundle\Tests\Functional\Controller\TestController:
+    autowire: true
+    autoconfigure: true
+    tags: [controller.service_arguments]
