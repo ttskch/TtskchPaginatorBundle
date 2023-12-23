@@ -27,6 +27,10 @@ final class ArraySlicer implements SlicerInterface
      */
     public function slice(CriteriaInterface $criteria): array
     {
+        $column = array_column($this->array, $criteria->getSort());
+
+        array_multisort($column, CriteriaInterface::ASC === $criteria->getDirection() ? SORT_ASC : SORT_DESC, $this->array);
+
         return array_slice($this->array, $criteria->getLimit() * ($criteria->getPage() - 1), $criteria->getLimit());
     }
 }

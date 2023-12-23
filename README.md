@@ -160,14 +160,6 @@ public function index(Paginator $paginator): Response
         new Criteria('id'),
     );
 
-    // or, if you want to save memory:
-
-    $paginator->initialize(
-        new CallbackSlicer(fn (Criteria $criteria) => array_slice($array, $criteria->getLimit() * ($criteria->getPage() -1), $criteria->getLimit())),
-        new CallbackCounter(fn () => count($array)),
-        new Criteria('id'),
-    );
-
     return $this->render('index.html.twig', [
         'foos' => $paginator->getSlice(),
     ]);
