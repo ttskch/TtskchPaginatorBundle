@@ -51,8 +51,8 @@
     "scripts": {
         "post-install-cmd": "@composer bin all install",
         "post-update-cmd": "@composer bin all install",
-        "cs": "vendor-bin/tools/vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php --dry-run --diff -v src tests",
-        "cs:fix": "vendor-bin/tools/vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php src tests",
+        "cs": "vendor-bin/tools/vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php --dry-run --diff -v",
+        "cs:fix": "vendor-bin/tools/vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php",
         "sa": "@php -d memory_limit=-1 vendor-bin/tools/vendor/bin/phpstan analyse",
         "sa:clear": "vendor-bin/tools/vendor/bin/phpstan clear-result-cache",
         "test": "@php -d memory_limit=-1 vendor/bin/phpunit",

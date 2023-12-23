@@ -29,7 +29,7 @@ The most thin, simple and customizable paginator bundle for Symfony.
 
 👉 [Live demo is here](https://ttskchpaginatorbundle.herokuapp.com)
 
-You can also see a sample code on [demo branch](https://github.com/ttskch/TtskchPaginatorBundle/tree/demo).
+You can also see a sample code on [`demo/` directory](demo).
 
 ## Installation
 

@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"></li>
+    <li class="breadcrumb-item active">
+      <a href="{{ path('post_index') }}">Posts</a>
+    </li>
+  </ol>
+
+  {{ form_start(form, {action: path('post_index'), method: 'get', attr: {class: 'form-inline align-items-start'}}) }}
+  <div class="container ms-0 px-0 mb-3">
+    <div class="d-flex flex-row">
+      <div class="flex-grow-1 d-flex flex-column">
+        <div class="d-flex flex-column flex-sm-row">
+          <div class="w-100 me-sm-2">
+            {{ form_widget(form.query) }}
+          </div>
+          <div class="w-100 mt-2 mt-sm-0" style="width:1px">
+            <div class="input-group">
+              {{ form_widget(form.after) }}
+              <label class="input-group-text"> - </label>
+              {{ form_widget(form.before) }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ms-2">
+        <button type="submit" class="btn btn-outline-secondary"><i class="fa-solid fa-magnifying-glass"></i></button>
+      </div>
+    </div>
+  </div>
+  {{ form_end(form) }}
+
+  <div class="table-responsive">
+    <table class="table table-sm table-hover">
+      <thead>
+      <tr>
+        <th>{{ ttskch_paginator_sortable('id', 'Id') }}</th>
+        <th>{{ ttskch_paginator_sortable('user.name', 'User') }}</th>
+        <th>{{ ttskch_paginator_sortable('subject', 'Subject') }}</th>
+        <th>{{ ttskch_paginator_sortable('date', 'Date') }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for post in posts %}
+        <tr>
+          <td>{{ post.id }}</td>
+          <td>
+            <a href="{{ path('user_show', {id: post.user.id}) }}">{{ post.user }}</a>
+          </td>
+          <td>
+            <a href="{{ path('post_show', {id: post.id}) }}">{{ post.subject }}</a>
+          </td>
+          <td>{{ post.date|date('Y-m-d') }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{{ ttskch_paginator_pager() }}
+{% endblock %}

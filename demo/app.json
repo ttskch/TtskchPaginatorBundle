@@ -1,0 +1,10 @@
+{
+  "buildpacks": [
+    {
+      "url": "heroku/php"
+    }
+  ],
+  "env": {
+    "APP_ENV": "prod"
+  }
+}

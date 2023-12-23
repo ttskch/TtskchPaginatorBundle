@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"></li>
+    <li class="breadcrumb-item active">
+      <a href="{{ path('user_index') }}">Users</a>
+    </li>
+  </ol>
+
+  <div class="table-responsive">
+    <table class="table table-sm table-hover">
+      <thead>
+      <tr>
+        <th>{{ ttskch_paginator_sortable('id', 'Id') }}</th>
+        <th>{{ ttskch_paginator_sortable('name', 'Name') }}</th>
+        <th>{{ ttskch_paginator_sortable('email', 'Email') }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for user in users %}
+        <tr>
+          <td>{{ user.id }}</td>
+          <td>
+            <a href="{{ path('user_show', {id: user.id}) }}">{{ user.name }}</a>
+          </td>
+          <td>{{ user.email }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {{ ttskch_paginator_pager() }}
+{% endblock %}
