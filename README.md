@@ -311,33 +311,45 @@ class FooSearchType extends AbstractType
 ```php
 // FooRepository.php
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Ttskch\PaginatorBundle\Counter\Doctrine\ORM\QueryBuilderCounter;
 use Ttskch\PaginatorBundle\Slicer\Doctrine\ORM\QueryBuilderSlicer;
 
-public function sliceByCriteria(FooCriteria $criteria): \Traversable
+/**
+ * @extends ServiceEntityRepository<Foo>
+ */
+class FooRepository extends ServiceEntityRepository
 {
-    $qb = $this->createQueryBuilderFromCriteria($criteria);
-    $slicer = new QueryBuilderSlicer($qb);
+    // ...
 
-    return $slicer->slice($criteria);
-}
-
-public function countByCriteria(FooCriteria $criteria): int
-{
-    $qb = $this->createQueryBuilderFromCriteria($criteria);
-    $counter = new QueryBuilderCounter($qb);
-
-    return $counter->count($criteria);
-}
-
-private function createQueryBuilderFromCriteria(FooCriteria $criteria): QueryBuilder
-{
-    return $this->createQueryBuilder('f')
-        ->orWhere('f.name like :query')
-        ->orWhere('f.email like :query')
-        ->setParameter('query', '%'.str_replace('%', '\%', $criteria->query).'%')
-    ;
+    /**
+     * @return \Traversable<array-key, Foo>
+     */
+    public function sliceByCriteria(FooCriteria $criteria): \Traversable
+    {
+        $qb = $this->createQueryBuilderFromCriteria($criteria);
+        $slicer = new QueryBuilderSlicer($qb);
+    
+        return $slicer->slice($criteria);
+    }
+    
+    public function countByCriteria(FooCriteria $criteria): int
+    {
+        $qb = $this->createQueryBuilderFromCriteria($criteria);
+        $counter = new QueryBuilderCounter($qb);
+    
+        return $counter->count($criteria);
+    }
+    
+    private function createQueryBuilderFromCriteria(FooCriteria $criteria): QueryBuilder
+    {
+        return $this->createQueryBuilder('f')
+            ->orWhere('f.name like :query')
+            ->orWhere('f.email like :query')
+            ->setParameter('query', '%'.str_replace('%', '\%', $criteria->query).'%')
+        ;
+    }
 }
 ```
 
@@ -353,11 +365,11 @@ use Ttskch\PaginatorBundle\Paginator;
 public function index(FooRepository $fooRepository, Paginator $paginator): Response
 {
     $paginator->initialize(
-        \Closure::fromCallable([$fooRepository, 'sliceByCriteria']),
-        \Closure::fromCallable([$fooRepository, 'countByCriteria']),
-        // or if PHP >= 8.1
-        // $fooRepository->sliceByCriteria(...),
-        // $fooRepository->countByCriteria(...),
+        $fooRepository->sliceByCriteria(...),
+        $fooRepository->countByCriteria(...),
+        // or if PHP < 8.1
+        // \Closure::fromCallable([$fooRepository, 'sliceByCriteria']),
+        // \Closure::fromCallable([$fooRepository, 'countByCriteria']),
         new FooCriteria('id'),
     );
 
@@ -400,37 +412,49 @@ public function index(FooRepository $fooRepository, Paginator $paginator): Respo
 ```php
 // FooRepository.php
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Ttskch\PaginatorBundle\Counter\Doctrine\ORM\QueryBuilderCounter;
 use Ttskch\PaginatorBundle\Slicer\Doctrine\ORM\QueryBuilderSlicer;
 
-public function sliceByCriteria(FooCriteria $criteria): \Traversable
+/**
+ * @extends ServiceEntityRepository<Foo>
+ */
+class FooRepository extends ServiceEntityRepository
 {
-    $qb = $this->createQueryBuilderFromCriteria($criteria);
-    $slicer = new QueryBuilderSlicer($qb, alreadyJoined: true); // **PAY ATTENTION HERE**
+    // ...
 
-    return $slicer->slice($criteria);
-}
-
-public function countByCriteria(FooCriteria $criteria): int
-{
-    $qb = $this->createQueryBuilderFromCriteria($criteria);
-    $counter = new QueryBuilderCounter($qb);
-
-    return $counter->count($criteria);
-}
-
-private function createQueryBuilderFromCriteria(FooCriteria $criteria): QueryBuilder
-{
-    return $this->createQueryBuilder('f')
-        ->leftJoin('f.bar', 'bar')
-        ->leftJoin('bar.baz', 'baz')
-        ->orWhere('f.name like :query')
-        ->orWhere('f.email like :query')
-        ->orWhere('bar.name like :query')
-        ->orWhere('baz.name like :query')
-        ->setParameter('query', '%'.str_replace('%', '\%', $criteria->query).'%')
-    ;
+    /**
+     * @return \Traversable<array-key, Foo>
+     */
+    public function sliceByCriteria(FooCriteria $criteria): \Traversable
+    {
+        $qb = $this->createQueryBuilderFromCriteria($criteria);
+        $slicer = new QueryBuilderSlicer($qb, alreadyJoined: true); // **PAY ATTENTION HERE**
+    
+        return $slicer->slice($criteria);
+    }
+    
+    public function countByCriteria(FooCriteria $criteria): int
+    {
+        $qb = $this->createQueryBuilderFromCriteria($criteria);
+        $counter = new QueryBuilderCounter($qb);
+    
+        return $counter->count($criteria);
+    }
+    
+    private function createQueryBuilderFromCriteria(FooCriteria $criteria): QueryBuilder
+    {
+        return $this->createQueryBuilder('f')
+            ->leftJoin('f.bar', 'bar')
+            ->leftJoin('bar.baz', 'baz')
+            ->orWhere('f.name like :query')
+            ->orWhere('f.email like :query')
+            ->orWhere('bar.name like :query')
+            ->orWhere('baz.name like :query')
+            ->setParameter('query', '%'.str_replace('%', '\%', $criteria->query).'%')
+        ;
+    }
 }
 ```
 
@@ -446,11 +470,11 @@ use Ttskch\PaginatorBundle\Paginator;
 public function index(FooRepository $fooRepository, Paginator $paginator): Response
 {
     $paginator->initialize(
-        \Closure::fromCallable([$fooRepository, 'sliceByCriteria']),
-        \Closure::fromCallable([$fooRepository, 'countByCriteria']),
-        // or if PHP >= 8.1
-        // $fooRepository->sliceByCriteria(...),
-        // $fooRepository->countByCriteria(...),
+        $fooRepository->sliceByCriteria(...),
+        $fooRepository->countByCriteria(...),
+        // or if PHP < 8.1
+        // \Closure::fromCallable([$fooRepository, 'sliceByCriteria']),
+        // \Closure::fromCallable([$fooRepository, 'countByCriteria']),
         new FooCriteria('f.id')
     );
 
