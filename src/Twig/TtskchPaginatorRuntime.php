@@ -24,11 +24,15 @@ class TtskchPaginatorRuntime implements RuntimeExtensionInterface
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param array{
+     *     templateName?: string,
+     *     context?: array<string, mixed>,
+     * } $options
      */
-    public function renderPager(Environment $twig, string $templateName = null, array $context = []): string
+    public function renderPager(Environment $twig, array $options = []): string
     {
-        $templateName ??= $this->config->templatePager;
+        $templateName = $options['templateName'] ?? $this->config->templatePager;
+        $context = $options['context'] ?? [];
 
         $currentPage = $this->paginator->getCriteria()->getPage();
         $firstPage = 1;
@@ -64,11 +68,17 @@ class TtskchPaginatorRuntime implements RuntimeExtensionInterface
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param array{
+     *     labelHtml?: bool,
+     *     templateName?: string,
+     *     context?: array<string, mixed>,
+     *  } $options
      */
-    public function renderSortableLink(Environment $twig, string $key, string $label = null, bool $labelHtml = false, string $templateName = null, array $context = []): string
+    public function renderSortableLink(Environment $twig, string $key, string $label, array $options = []): string
     {
-        $templateName ??= $this->config->templateSortable;
+        $labelHtml = $options['labelHtml'] ?? false;
+        $templateName = $options['templateName'] ?? $this->config->templateSortable;
+        $context = $options['context'] ?? [];
 
         $isSorted = $key === $this->paginator->getCriteria()->getSort();
 
@@ -89,7 +99,7 @@ class TtskchPaginatorRuntime implements RuntimeExtensionInterface
             'direction_name' => $this->config->sortDirectionName,
             'direction_current' => $currentDirection,
             'direction_next' => $nextDirection,
-            'label' => $label ?? ucwords($key),
+            'label' => $label,
             'label_html' => $labelHtml,
         ]);
 
