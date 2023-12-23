@@ -24,15 +24,9 @@
         "symfony/twig-bundle": "7.0.*",
         "symfony/validator": "7.0.*",
         "symfony/yaml": "7.0.*",
-        "ttskch/paginator-bundle": "dev-feat/refactor",
+        "ttskch/paginator-bundle": "^6.0",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"
-    },
-    "repositories": {
-        "ttskch/paginator-bundle": {
-            "type": "vcs",
-            "url": "https://github.com/ttskch/TtskchPaginatorBundle"
-        }
     },
     "config": {
         "allow-plugins": {

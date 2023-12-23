@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b30335884393bdb3a97601947b74b2d8",
+    "content-hash": "30e7b45a82c54e1acff3d08bd057581e",
     "packages": [
         {
             "name": "cakephp/chronos",
@@ -5067,16 +5067,16 @@
         },
         {
             "name": "ttskch/paginator-bundle",
-            "version": "dev-feat/refactor",
+            "version": "6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ttskch/TtskchPaginatorBundle.git",
-                "reference": "d44c3588c560e1348d4af18aab5434a68ccb4297"
+                "reference": "46e3ef726e4c422dae112f0c3467571d1dcf78ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ttskch/TtskchPaginatorBundle/zipball/d44c3588c560e1348d4af18aab5434a68ccb4297",
-                "reference": "d44c3588c560e1348d4af18aab5434a68ccb4297",
+                "url": "https://api.github.com/repos/ttskch/TtskchPaginatorBundle/zipball/46e3ef726e4c422dae112f0c3467571d1dcf78ac",
+                "reference": "46e3ef726e4c422dae112f0c3467571d1dcf78ac",
                 "shasum": ""
             },
             "require": {
@@ -5111,43 +5111,7 @@
                     "Ttskch\\PaginatorBundle\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Ttskch\\PaginatorBundle\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "post-install-cmd": [
-                    "@composer bin all install"
-                ],
-                "post-update-cmd": [
-                    "@composer bin all install"
-                ],
-                "cs": [
-                    "vendor-bin/tools/vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php --dry-run --diff -v"
-                ],
-                "cs:fix": [
-                    "vendor-bin/tools/vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php"
-                ],
-                "sa": [
-                    "@php -d memory_limit=-1 vendor-bin/tools/vendor/bin/phpstan analyse"
-                ],
-                "sa:clear": [
-                    "vendor-bin/tools/vendor/bin/phpstan clear-result-cache"
-                ],
-                "test": [
-                    "@php -d memory_limit=-1 vendor/bin/phpunit"
-                ],
-                "tests": [
-                    "@cs",
-                    "@test",
-                    "@sa"
-                ],
-                "tests:bc": [
-                    "@cs",
-                    "@test"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -5162,10 +5126,10 @@
                 "symfony"
             ],
             "support": {
-                "source": "https://github.com/ttskch/TtskchPaginatorBundle/tree/feat/refactor",
-                "issues": "https://github.com/ttskch/TtskchPaginatorBundle/issues"
+                "issues": "https://github.com/ttskch/TtskchPaginatorBundle/issues",
+                "source": "https://github.com/ttskch/TtskchPaginatorBundle/tree/6.0.0"
             },
-            "time": "2023-12-23T14:35:38+00:00"
+            "time": "2023-12-23T14:43:06+00:00"
         },
         {
             "name": "twig/extra-bundle",
@@ -6651,9 +6615,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "ttskch/paginator-bundle": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
