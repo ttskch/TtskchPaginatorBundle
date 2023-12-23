@@ -12,7 +12,7 @@ use Ttskch\PaginatorBundle\Criteria\CriteriaInterface;
 final class CallbackCounter implements CounterInterface
 {
     /**
-     * @param \Closure(TCriteria $criteria): int $callback
+     * @param \Closure(TCriteria): int $callback
      */
     public function __construct(
         /** @readonly */

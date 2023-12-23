@@ -15,7 +15,7 @@ use Ttskch\PaginatorBundle\Criteria\CriteriaInterface;
 final class CallbackSlicer implements SlicerInterface
 {
     /**
-     * @param \Closure(TCriteria $criteria): TSlice $callback
+     * @param \Closure(TCriteria): TSlice $callback
      */
     public function __construct(
         /** @readonly */
