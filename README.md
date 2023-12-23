@@ -11,16 +11,16 @@ The most thin, simple and customizable paginator bundle for Symfony.
 ## Features
 
 * So **light weight**
-* **Well typed**
-* **Depends on nothing** without Symfony
+* **Well typed** (PHPStan level max)
+* **Depends on nothing** other than Symfony and Twig
 * But also easy to use with **Doctrine ORM**
 * Of course **can paginate everything**
 * Customizable **twig-templated views**
 * Very easy-to-use **sortable link** feature
-* Easy to use with **search form**
+* Easy to use with **your own search form**
 * Preset beautiful **Bootstrap4/5 theme**
 
-## Requirement
+## Requirements
 
 * PHP: ^8.0
 * Symfony: ^5.0|^6.0|^7.0
@@ -120,18 +120,14 @@ Just do like as following.
 
 ### With array
 
-Implement slicer and counter by yourself like as following.
-
 ```php
 // FooController.php
 
 use Symfony\Component\HttpFoundation\Response;
 use Ttskch\PaginatorBundle\Counter\ArrayCounter;
-use Ttskch\PaginatorBundle\Counter\CallbackCounter;
 use Ttskch\PaginatorBundle\Criteria\Criteria;
 use Ttskch\PaginatorBundle\Paginator;
 use Ttskch\PaginatorBundle\Slicer\ArraySlicer;
-use Ttskch\PaginatorBundle\Slicer\CallbackSlicer;
 
 /**
  * @param Paginator<array<array{id: int, name: string, email: string}>, Criteria> $paginator
@@ -162,6 +158,42 @@ public function index(Paginator $paginator): Response
 
     return $this->render('index.html.twig', [
         'foos' => $paginator->getSlice(),
+    ]);
+}
+```
+
+### With something other data
+
+Implement slicer and counter by yourself like as following.
+
+```php
+use Symfony\Component\HttpFoundation\Response;
+use Ttskch\PaginatorBundle\Counter\CallbackCounter;
+use Ttskch\PaginatorBundle\Criteria\Criteria;
+use Ttskch\PaginatorBundle\Paginator;
+use Ttskch\PaginatorBundle\Slicer\CallbackSlicer;
+
+/**
+ * @param Paginator<TypeOfYourOwnSlice>, Criteria> $paginator
+ */
+public function index(Paginator $paginator): Response
+{
+    $yourOwnData = /* ... */;
+
+    $paginator->initialize(
+        new CallbackSlicer(function (Criteria $criteria) use ($yourOwnData) {
+            /* ... */
+            return $yourOwnSlice;
+        }),
+        new CallbackCounter(function (Criteria $criteria) use ($yourOwnData) {
+            /* ... */
+            return $totalItemsCount;
+        }),
+        new Criteria('default_sort_key'),
+    );
+
+    return $this->render('index.html.twig', [
+        'yourOwnSlice' => $paginator->getSlice(),
     ]);
 }
 ```
