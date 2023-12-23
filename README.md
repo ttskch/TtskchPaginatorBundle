@@ -353,8 +353,11 @@ use Ttskch\PaginatorBundle\Paginator;
 public function index(FooRepository $fooRepository, Paginator $paginator): Response
 {
     $paginator->initialize(
-        [$fooRepository, 'sliceByCriteria'],
-        [$fooRepository, 'countByCriteria'],
+        \Closure::fromCallable([$fooRepository, 'sliceByCriteria']),
+        \Closure::fromCallable([$fooRepository, 'countByCriteria']),
+        // or if PHP >= 8.1
+        // $fooRepository->sliceByCriteria(...),
+        // $fooRepository->countByCriteria(...),
         new FooCriteria('id'),
     );
 
@@ -443,8 +446,11 @@ use Ttskch\PaginatorBundle\Paginator;
 public function index(FooRepository $fooRepository, Paginator $paginator): Response
 {
     $paginator->initialize(
-        [$fooRepository, 'sliceByCriteria'],
-        [$fooRepository, 'countByCriteria'],
+        \Closure::fromCallable([$fooRepository, 'sliceByCriteria']),
+        \Closure::fromCallable([$fooRepository, 'countByCriteria']),
+        // or if PHP >= 8.1
+        // $fooRepository->sliceByCriteria(...),
+        // $fooRepository->countByCriteria(...),
         new FooCriteria('f.id')
     );
 
