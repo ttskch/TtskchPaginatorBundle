@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Ttskch\PaginatorBundle\TtskchPaginatorBundle;
 
 /**
- * @see \Ttskch\PaginatorBundle\Tests\Functional\WebTestCase::getKernelClass()
+ * @see WebTestCase::getKernelClass()
  * @see https://zenn.dev/ttskch/articles/f9701ccf95d7c7
  * @see https://symfony.com/doc/current/configuration/micro_kernel_trait.html
  */
