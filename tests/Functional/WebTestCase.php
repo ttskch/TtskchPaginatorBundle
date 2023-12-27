@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ttskch\PaginatorBundle\Tests\Functional;
 
-use ComposerLockParser\ComposerInfo;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 
 /**
@@ -27,16 +26,22 @@ class WebTestCase extends BaseWebTestCase
 
     private static function getFrameworkBundleVersionId(): int
     {
-        $composerInfo = new ComposerInfo(__DIR__.'/../../composer.lock');
-        $package = $composerInfo->getPackages()->getByName('symfony/framework-bundle');
-        $version = ltrim($package->getVersion(), 'v');
+        /** @var array{packages-dev: array<array{name: string, version: string}>} $lock */
+        $lock = json_decode(strval(file_get_contents(__DIR__.'/../../composer.lock')), true, flags: JSON_THROW_ON_ERROR);
+        foreach ($lock['packages-dev'] as $package) {
+            if ('symfony/framework-bundle' === $package['name']) {
+                $version = ltrim($package['version'], 'v');
 
-        if (false === preg_match('/^\d+\.\d+\.\d+$/', $version)) {
-            throw new \RuntimeException('Only can test with stable version of "symfony/framework-bundle".');
+                if (false === preg_match('/^\d+\.\d+\.\d+$/', $version)) {
+                    throw new \RuntimeException('Only can test with stable version of "symfony/framework-bundle".');
+                }
+
+                [$major, $minor, $patch] = explode('.', $version);
+
+                return intval(sprintf('%d%02d%02d', $major, $minor, $patch));
+            }
         }
 
-        [$major, $minor, $patch] = explode('.', $version);
-
-        return intval(sprintf('%d%02d%02d', $major, $minor, $patch));
+        throw new \RuntimeException('"symfony/framework-bundle" is not installed.');
     }
 }
