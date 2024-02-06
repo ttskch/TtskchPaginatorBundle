@@ -33,13 +33,13 @@ final class QueryBuilderSlicer implements SlicerInterface
     /**
      * @return \Traversable<array-key, T>
      */
-    public function slice(CriteriaInterface $criteria): \Traversable
+    public function slice(CriteriaInterface $criteria, bool $fetchJoinCollection = true): \Traversable
     {
         $this->sortByCriteria($criteria, $this->alreadyJoined);
 
         // @see https://stackoverflow.com/questions/50199102/setmaxresults-does-not-works-fine-when-doctrine-query-has-join/50203939#answer-50203939
         /** @var Paginator<T> $paginator */
-        $paginator = new Paginator($this->qb, true);
+        $paginator = new Paginator($this->qb, $fetchJoinCollection);
 
         $paginator->getQuery()
             ->setFirstResult($criteria->getLimit() * ($criteria->getPage() - 1))
