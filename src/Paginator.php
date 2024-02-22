@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Ttskch\PaginatorBundle\Counter\CounterInterface;
 use Ttskch\PaginatorBundle\Criteria\CriteriaInterface;
+use Ttskch\PaginatorBundle\Exception\UninitializedCriteriaException;
 use Ttskch\PaginatorBundle\Exception\UninitializedPaginatorException;
 use Ttskch\PaginatorBundle\Slicer\SlicerInterface;
 
@@ -50,9 +51,23 @@ class Paginator
     ): void {
         $this->criteria = $criteria;
 
-        $criteria->setPage(1);
-        $criteria->setLimit($this->config->limitDefault);
-        $criteria->setDirection($this->config->sortDirectionDefault);
+        try {
+            $criteria->getPage();
+        } catch (UninitializedCriteriaException) {
+            $criteria->setPage(1);
+        }
+
+        try {
+            $criteria->getLimit();
+        } catch (UninitializedCriteriaException) {
+            $criteria->setLimit($this->config->limitDefault);
+        }
+
+        try {
+            $criteria->getDirection();
+        } catch (UninitializedCriteriaException) {
+            $criteria->setDirection($this->config->sortDirectionDefault);
+        }
 
         $this->form = $this->formFactory->createNamed('', $this->criteria->getFormTypeClass(), $criteria, array_merge([
             'method' => 'GET',
