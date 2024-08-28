@@ -16,42 +16,60 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          extensions: pcov
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Get Composer cache directory path
         id: composer-cache-dir-path
         run: echo "path=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache-dir-path.outputs.path }}
           key: ${{ runner.os }}-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-${{ matrix.php }}-composer-
 
-      - name: Install dependencies
+      - name: Install Composer dependencies
         if: ${{ !matrix.prefer-lowest }}
-        run: composer install --no-interaction --no-progress --prefer-dist
+        run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: Install lowest dependencies
+      - name: Install lowest Composer dependencies
         if: ${{ matrix.prefer-lowest }}
-        run: composer update --no-interaction --no-progress --prefer-dist --prefer-lowest
+        run: |
+          composer update --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --prefer-lowest
+          composer update --dev --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Install composer-bin-plugin dependencies
+        if: ${{ matrix.php == '8.3' && !matrix.prefer-lowest }}
+        run: composer bin all install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: Execute tests
-        if: ${{ !matrix.prefer-lowest }}
+      - name: Execute tests in latest environment
+        if: ${{ matrix.php == '8.3' && !matrix.prefer-lowest }}
         run: composer tests
 
-      - name: Execute tests for lowest dependencies
-        if: ${{ matrix.prefer-lowest }}
+      - name: Execute tests for backward compatibility
+        if: ${{ matrix.php != '8.3' || matrix.prefer-lowest }}
         run: composer tests:bc
+
+      - name: Generate coverage report
+        if: ${{ matrix.php == '8.3' && !matrix.prefer-lowest }}
+        run: composer pcov
+
+      - name: Upload coverage report to Codecov
+        if: ${{ matrix.php == '8.3' && !matrix.prefer-lowest }}
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/coverage.xml
+          verbose: true
 
   deploy-demo:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: akhileshns/heroku-deploy@v3.12.14
         with:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
