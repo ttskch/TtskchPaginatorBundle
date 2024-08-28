@@ -1,8 +1,9 @@
 # TtskchPaginatorBundle
 
 [![](https://github.com/ttskch/TtskchPaginatorBundle/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/ttskch/TtskchPaginatorBundle/actions/workflows/ci.yaml?query=branch:main)
+[![codecov](https://codecov.io/gh/ttskch/TtskchPaginatorBundle/graph/badge.svg?token=OJWIKJIDTY)](https://codecov.io/gh/ttskch/TtskchPaginatorBundle)
 [![Latest Stable Version](https://poser.pugx.org/ttskch/paginator-bundle/version?format=flat-square)](https://packagist.org/packages/ttskch/paginator-bundle)
-[![Total Downloads](https://poser.pugx.org/ttskch/paginator-bundle/downloads?format=flat-square)](https://packagist.org/packages/ttskch/paginator-bundle)
+[![Total Downloads](https://poser.pugx.org/ttskch/paginator-bundle/downloads?format=flat-square)](https://packagist.org/packages/ttskch/paginator-bundle/stats)
 
 The most thin, simple and customizable paginator bundle for Symfony.
 
@@ -514,4 +515,14 @@ public function index(FooRepository $fooRepository, Paginator $paginator): Respo
 </table>
 
 {{ ttskch_paginator_pager() }}
+```
+
+## Getting involved
+
+```shell
+$ composer install
+
+# Develop...
+
+$ composer tests
 ```
