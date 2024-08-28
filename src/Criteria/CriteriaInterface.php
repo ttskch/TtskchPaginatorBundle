@@ -24,12 +24,12 @@ interface CriteriaInterface
     public function setSort(string $sort): void;
 
     /**
-     * @return 'asc'|'desc'
+     * @return self::ASC|self::DESC
      */
     public function getDirection(): string;
 
     /**
-     * @param 'asc'|'desc' $direction
+     * @param self::ASC|self::DESC $direction
      */
     public function setDirection(string $direction): void;
 

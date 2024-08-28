@@ -6,6 +6,7 @@ namespace Ttskch\PaginatorBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Ttskch\PaginatorBundle\Criteria\CriteriaInterface;
 
 class Configuration implements ConfigurationInterface
 {
@@ -40,8 +41,8 @@ class Configuration implements ConfigurationInterface
                                 ->scalarNode('name')->defaultValue('direction')->end()
                                 ->scalarNode('default')
                                     ->info('"asc" or "desc"')
-                                    ->validate()->ifNotInArray(['asc', 'desc'])->thenInvalid('Invalid direction value. Only "asc" or "desc" is allowed.')->end()
-                                    ->defaultValue('asc')->end()
+                                    ->validate()->ifNotInArray([CriteriaInterface::ASC, CriteriaInterface::DESC])->thenInvalid(sprintf('Invalid direction value. Only "%s" or "%s" is allowed.', CriteriaInterface::ASC, CriteriaInterface::DESC))->end()
+                                    ->defaultValue(CriteriaInterface::ASC)->end()
                             ->end()
                         ->end()
                     ->end()
