@@ -4,16 +4,12 @@
     "keywords": ["symfony", "pager", "pagination", "paginator", "sortable", "customizable", "searchable"],
     "type": "symfony-bundle",
     "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "Ttskch\\PaginatorBundle\\": "src/"
+    "authors": [
+        {
+            "name": "Takashi Kanemoto",
+            "email": "ttskch@gmail.com"
         }
-    },
-    "autoload-dev": {
-        "psr-4": {
-          "Ttskch\\PaginatorBundle\\Tests\\": "tests/"
-        }
-    },
+    ],
     "require": {
         "php": "^8.0",
         "symfony/config": "^5.0|^6.0|^7.0",
@@ -23,6 +19,7 @@
         "twig/twig": ">=3.4.3"
     },
     "require-dev": {
+        "ext-pcov": "*",
         "bamarni/composer-bin-plugin": "*",
         "doctrine/orm": "^2.17",
         "phpspec/prophecy-phpunit": "^2.1",
@@ -34,26 +31,78 @@
         "symfony/twig-bundle": "^5.0|^6.0|^7.0",
         "symfony/yaml": "^5.0|^6.0|^7.0"
     },
+    "autoload": {
+        "psr-4": {
+            "Ttskch\\PaginatorBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ttskch\\PaginatorBundle\\Tests\\": [
+                "tests/",
+                "tests/Fake/"
+            ]
+        }
+    },
+    "scripts": {
+        "setup": "php bin/setup.php",
+        "test": "./vendor/bin/phpunit",
+        "coverage": "php -dzend_extension=xdebug.so -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage",
+        "phpdbg": "phpdbg -qrr ./vendor/bin/phpunit --coverage-text --coverage-html ./build/coverage --coverage-clover=coverage.xml",
+        "pcov": "php -dextension=pcov.so -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage  --coverage-clover=build/coverage.xml",
+        "cs": [
+            "@putenv PHP_CS_FIXER_IGNORE_ENV=1",
+            "./vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php --dry-run --diff -v"
+        ],
+        "cs:fix": [
+            "@putenv PHP_CS_FIXER_IGNORE_ENV=1",
+            "./vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php"
+        ],
+        "metrics": "./vendor/bin/phpmetrics --report-html=build/metrics --exclude=Exception src",
+        "clean": [
+            "./vendor/bin/phpstan clear-result-cache",
+            "# ./vendor/bin/psalm --clear-cache"
+        ],
+        "sa": [
+            "./vendor/bin/phpstan analyse -c phpstan.neon",
+            "# ./vendor/bin/psalm --show-info=true"
+        ],
+        "tests": [
+            "@cs",
+            "@test",
+            "@sa"
+        ],
+        "tests:bc": [
+            "@test"
+        ],
+        "build": [
+            "@clean",
+            "@cs",
+            "@sa",
+            "@pcov",
+            "@metrics"
+        ],
+        "post-install-cmd": "@composer bin all install --ansi",
+        "post-update-cmd": "@composer bin all update --ansi"
+    },
+    "scripts-descriptions": {
+        "test": "Run unit tests",
+        "coverage": "Generate test coverage report",
+        "phpdbg": "Generate test coverage report (phpdbg)",
+        "pcov": "Generate test coverage report (pcov)",
+        "cs": "Check the coding style",
+        "cs-fix": "Fix the coding style",
+        "clean": "Delete tmp files",
+        "sa": "Run static analysis",
+        "metrics": "Build metrics report",
+        "tests": "Run tests and quality checks",
+        "tests:bc": "Run tests",
+        "build": "Build project"
+    },
     "config": {
         "allow-plugins": {
             "bamarni/composer-bin-plugin": true
         },
         "sort-packages": true
-    },
-    "extra": {
-        "bamarni-bin": {
-            "bin-links": false
-        }
-    },
-    "scripts": {
-        "post-install-cmd": "@composer bin all install",
-        "post-update-cmd": "@composer bin all install",
-        "cs": "vendor-bin/tools/vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php --dry-run --diff -v",
-        "cs:fix": "vendor-bin/tools/vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php",
-        "sa": "@php -d memory_limit=-1 vendor-bin/tools/vendor/bin/phpstan analyse",
-        "sa:clear": "vendor-bin/tools/vendor/bin/phpstan clear-result-cache",
-        "test": "@php -d memory_limit=-1 vendor/bin/phpunit",
-        "tests": ["@cs", "@test", "@sa"],
-        "tests:bc": ["@cs", "@test"]
     }
 }

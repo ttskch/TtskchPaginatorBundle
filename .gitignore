@@ -1,10 +1,10 @@
-/composer.lock
 /vendor
-/vendor-bin/*/composer.lock
 /vendor-bin/*/vendor
-/var
-/.phpunit.result.cache
+/build/
+/composer.lock
 /phpunit.xml
-/.php-cs-fixer.php
+/.phpunit.result.cache
+/.phpcs-cache
 /.php-cs-fixer.cache
-/phpstan.neon
+/.envrc
+/var
