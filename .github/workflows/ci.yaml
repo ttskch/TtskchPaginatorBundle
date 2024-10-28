@@ -40,6 +40,7 @@ jobs:
         run: |
           composer update --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --prefer-lowest
           composer update --dev --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
       - name: Install composer-bin-plugin dependencies
         if: ${{ matrix.php == '8.3' && !matrix.prefer-lowest }}
         run: composer bin all install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
